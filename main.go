@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "code.holdonbush.top/ServerFramework/Server"
 	"code.holdonbush.top/FinalCheckmateServer/ServerDemo"
 	"time"
 )
