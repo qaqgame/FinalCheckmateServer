@@ -6,6 +6,6 @@ require (
 	google.golang.org/protobuf v1.20.1
 )
 
-replace code.holdonbush.top/ServerFramework => ../ServerFrameWork
+replace code.holdonbush.top/ServerFramework => ../ServerFramework
 
 go 1.13

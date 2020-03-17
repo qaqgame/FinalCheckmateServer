@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	server := ServerDemo.NewServerDemo()
+	server := ServerDemo.NewServerDemo(8080)
 
 	for true {
 		server.Tick()

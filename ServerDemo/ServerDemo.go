@@ -11,16 +11,18 @@ type ServerDemo struct {
 	netManager *Server.NetManager
 }
 
-func NewServerDemo() *ServerDemo {
+func NewServerDemo(port int) *ServerDemo {
 	serverDemo := new(ServerDemo)
-	serverDemo.netManager = Server.NewNetManager(6666)
+	serverDemo.netManager = Server.NewNetManager(port)
 	serverDemo.netManager.SetAuthCmd(DataFormat.LoginReq)
 	serverDemo.netManager.AddListener(DataFormat.LoginReq, serverDemo.OnLogin, &DataFormat.LoginMsg{})
 
+	log.Println("create serverdemo")
 	return serverDemo
 }
 
 func (serverDemo *ServerDemo) Tick() {
+	log.Println("tick")
 	serverDemo.netManager.Tick()
 }
 
