@@ -1,16 +1,15 @@
 package main
 
 import (
-	"code.holdonbush.top/ServerFramework"
-	"code.holdonbush.top/ServerFramework/ServerManager"
+	"code.holdonbush.top/FinalCheckmateServer/ServerDemo"
+	"time"
 )
 
 func main() {
-	serverManager := ServerManager.ServerManager{}
-	serverManager.Init()
-	serverManager.StartServer(1)
-	serverManager.StartServer(1)
-	ServerFramework.Run(&serverManager)   // 主循环
+	server := ServerDemo.NewServerDemo()
 
-	serverManager.StopAllServer()
+	for true {
+		server.Tick()
+		time.Sleep(1*time.Second)
+	}
 }

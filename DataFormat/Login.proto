@@ -1,0 +1,12 @@
+syntax = "proto3";
+package DataFormat;
+
+message LoginMsg {
+    fixed32 id = 1;
+    string name = 2;
+}
+
+message LoginRsp {
+    fixed32 ret = 1;
+    string msg = 2;
+}
