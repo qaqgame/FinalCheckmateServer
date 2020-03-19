@@ -3,26 +3,28 @@ package ServerDemo
 import (
 	"code.holdonbush.top/FinalCheckmateServer/DataFormat"
 	"code.holdonbush.top/ServerFramework/Server"
-	"fmt"
 	"github.com/golang/protobuf/proto"
-	logger "github.com/sirupsen/logrus"
-	"log"
-	"reflect"
-	"time"
+	log "github.com/sirupsen/logrus"
 )
 
 type ServerDemo struct {
 	netManager *Server.NetManager
+	logger     *log.Entry
 }
 
 func NewServerDemo(port int) *ServerDemo {
+	loggerInfo := log.WithFields(log.Fields{"ServerName":"ServerDemo"})
+	loggerInfo.Info("Server Created")
 	serverDemo := new(ServerDemo)
-	serverDemo.netManager = Server.NewNetManager(port)
+	serverDemo.logger = loggerInfo
+	serverDemo.netManager = Server.NewNetManager(port,loggerInfo)
 	serverDemo.netManager.SetAuthCmd(DataFormat.LoginReq)
 	serverDemo.netManager.AddListener(DataFormat.LoginReq, serverDemo.OnLogin, new(DataFormat.LoginMsg))
 
-	log.Println("create serverdemo")
-	logger.Info("create serverdemo")
+	// log.Println("create serverdemo")
+	//logger.WithFields(logger.Fields{
+	//
+	//}).Info("ServerDemo started")
 	return serverDemo
 }
 
@@ -32,14 +34,14 @@ func (serverDemo *ServerDemo) Tick() {
 }
 
 func (serverDemo *ServerDemo) OnLogin(session Server.ISession, index uint32, tmsg proto.Message) {
-	log.Println("ServerDemo OnLogin",reflect.ValueOf(tmsg))
+	//log.Println("ServerDemo OnLogin",reflect.ValueOf(tmsg))
 	t := tmsg.(*DataFormat.LoginMsg)
-	fmt.Println("tfttt",t)
 	//if t == nil {
 	//	log.Println("data format error: ",t)
 	//}
-	log.Println("id ",t.Uid," name ", t.Name)
-	log.Println(time.Now().Unix(),"received")
+	//log.Println("id ",t.Uid," name ", t.Name)
+	//log.Println(time.Now().Unix(),"received")
+	serverDemo.logger.Debug("OnLogin of ServerDemo, uid",t.Uid,"name",t.Name)
 	res := DataFormat.LoginRsp{}
 	res.Ret = session.GetId()
 	res.Msg = "success"

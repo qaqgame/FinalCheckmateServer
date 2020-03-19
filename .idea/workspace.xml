@@ -3,12 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="821f7544-f0ae-470b-bf95-230b1544a468" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataFormat/Login.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/DataFormat/Login.pb.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataFormat/Login.proto" beforeDir="false" afterPath="$PROJECT_DIR$/DataFormat/Login.proto" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FinalCheckmateServer.exe" beforeDir="false" afterPath="$PROJECT_DIR$/FinalCheckmateServer.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ServerDemo/ServerDemo.go" beforeDir="false" afterPath="$PROJECT_DIR$/ServerDemo/ServerDemo.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
