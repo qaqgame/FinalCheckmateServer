@@ -3,7 +3,12 @@
   <component name="ChangeListManager">
     <list default="true" id="821f7544-f0ae-470b-bf95-230b1544a468" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataFormat/Login.pb.go" beforeDir="false" afterPath="$PROJECT_DIR$/DataFormat/Login.pb.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataFormat/Login.proto" beforeDir="false" afterPath="$PROJECT_DIR$/DataFormat/Login.proto" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/FinalCheckmateServer.exe" beforeDir="false" afterPath="$PROJECT_DIR$/FinalCheckmateServer.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServerDemo/ServerDemo.go" beforeDir="false" afterPath="$PROJECT_DIR$/ServerDemo/ServerDemo.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -24,8 +29,11 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="1Z4KJ2Y9iNbQDMvyxMDc3LjlIX5" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="DefaultGoTemplateProperty" value="Go File" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="configurable.Global.GOPATH.is.expanded" value="true" />
@@ -62,6 +70,9 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
