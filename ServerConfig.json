@@ -1,1 +1,1 @@
-{"ServerModuleInfos": [{"Id": 1, "Name": "ZoneServer", "Port": 4050}]}
+{"ServerModuleInfos": [{"Id": 1, "Name": "TestServer1", "Port": 4050},{"Id": 2, "Name": "TestServer2", "Port": 4051}]}

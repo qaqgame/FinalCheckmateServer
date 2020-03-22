@@ -1,8 +1,10 @@
 package main
 
 import (
-	"code.holdonbush.top/FinalCheckmateServer/ServerDemo"
+	"code.holdonbush.top/FinalCheckmateServer/TestServer1"
+	"code.holdonbush.top/FinalCheckmateServer/TestServer2"
 	_ "code.holdonbush.top/ServerFramework/Server"
+	"code.holdonbush.top/ServerFramework/ServerManager"
 	"time"
 )
 
@@ -11,9 +13,17 @@ func init() {
 }
 
 func main() {
-	server := ServerDemo.NewServerDemo(8080)
+	servermanager := ServerManager.NewServerManager()
+	// ServerFramework.Run(servermanager)
+	server2 := TestServer2.NewTestServer2()
+	server1 := TestServer1.NewTestServer1()
+
+	servermanager.AddServer(server1)
+	servermanager.AddServer(server2)
+
+	servermanager.StartAllServer1()
+
 	for true {
-		server.Tick()
-		time.Sleep(1*time.Millisecond)
+		time.Sleep(time.Second)
 	}
 }
