@@ -45,17 +45,25 @@ func NewTestServer1() *TestServer1 {
 func (server *TestServer1)GetId() int {
 	return server.Id
 }
-func (server *TestServer1)Create(info ServerManager.ServerModuleInfo) {
-	server.created = true
-	server.status = DataFormat.Created
-	server.logger.Info("Server Created")
+func (server *TestServer1)Create() {
+	if server.status == ServerManager.UnCreated || server.status == ServerManager.Released {
+		server.created = true
+		server.status = ServerManager.Created
+		server.logger.Info("Server Created")
+	}
 }
 func (server *TestServer1)Release() {
-	server.status = DataFormat.Released
+	if server.status == ServerManager.Released {
+		return
+	}
+	server.status = ServerManager.Released
 	server.logger.Info("Server Released")
 }
 func (server *TestServer1)Start() {
-	server.status = DataFormat.Started
+	if server.status == ServerManager.Running {
+		return
+	}
+	server.status = ServerManager.Running
 	go func(server *TestServer1) {
 		for true {
 			select {
@@ -70,7 +78,10 @@ func (server *TestServer1)Start() {
 	server.logger.Info("Server Started")
 }
 func (server *TestServer1)Stop() {
-	server.status = DataFormat.Stopped
+	if server.status == ServerManager.Stopped {
+		return
+	}
+	server.status = ServerManager.Stopped
 	server.close <- 1
 	server.logger.Info("Server Stopped")
 }
@@ -94,4 +105,8 @@ func (server *TestServer1)IsCreated() bool {
 
 func (server *TestServer1)GetModuleInfo() ServerManager.ServerModuleInfo {
 	return server.ServerModule.MInfo
+}
+
+func (server *TestServer1)GetStatus() int {
+	return server.status
 }

@@ -4,6 +4,7 @@ import (
 	"code.holdonbush.top/FinalCheckmateServer/DataFormat"
 	"code.holdonbush.top/ServerFramework/IPCWork"
 	"code.holdonbush.top/ServerFramework/ServerManager"
+	"fmt"
 	log "github.com/sirupsen/logrus"
 	"time"
 )
@@ -45,18 +46,25 @@ func NewTestServer2() *TestServer2 {
 func (server *TestServer2)GetId() int {
 	return server.Id
 }
-func (server *TestServer2)Create(info ServerManager.ServerModuleInfo) {
-	server.created = true
-	server.status = DataFormat.Created
-	server.logger.Info("Server Created")
+func (server *TestServer2)Create() {
+	if server.status == ServerManager.UnCreated || server.status == ServerManager.Released {
+		server.created = true
+		server.status = ServerManager.Created
+		server.logger.Info("Server Created")
+	}
 }
 func (server *TestServer2)Release() {
-	server.status = DataFormat.Released
+	if server.status == ServerManager.Released {
+		return
+	}
+	server.status = ServerManager.Released
 	server.logger.Info("Server Released")
 }
 func (server *TestServer2)Start() {
-
-	server.status = DataFormat.Started
+	if server.status == ServerManager.Running {
+		return
+	}
+	server.status = ServerManager.Running
 	go func(server *TestServer2) {
 		for true {
 			select {
@@ -71,9 +79,15 @@ func (server *TestServer2)Start() {
 	server.logger.Info("Server Started")
 }
 func (server *TestServer2)Stop() {
-	server.status = DataFormat.Stopped
+	if server.status == ServerManager.Stopped {
+		return
+	}
+	server.status = ServerManager.Stopped
 	server.close <- 1
 	server.logger.Info("Server Stopped")
+}
+func (server *TestServer2)Tick() {
+	server.logger.Info("Tick")
 }
 func (server *TestServer2)IsCreated() bool {
 	return server.created
@@ -83,8 +97,18 @@ func (server *TestServer2)GetModuleInfo() ServerManager.ServerModuleInfo {
 	return server.ServerModule.MInfo
 }
 
-func (server *TestServer2) TestFunc(args *DataFormat.Args, reply *DataFormat.Reply) error {
-	server.logger.Info(args.Phase," ",args.Phase2)
-	reply.V = 2
+func (server *TestServer2)GetStatus() int {
+	return server.status
+}
+
+func (server *TestServer2)TestFunc(args *DataFormat.Args, reply *DataFormat.Reply) error {
+	fmt.Println(args)
+	reply.V = 3
+	return nil
+}
+
+func (server *TestServer2)TestFunc1(args *DataFormat.Args, reply *DataFormat.Reply) error {
+	fmt.Println(args)
+	reply.V = 3
 	return nil
 }

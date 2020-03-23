@@ -5,13 +5,6 @@ const (
 	LoginRes uint32 = 2
 )
 
-const (
-	Created = iota
-	Started
-	Stopped
-	Released
-)
-
 type Args struct {
 	Phase   int
 	Phase2  string
