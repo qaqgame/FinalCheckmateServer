@@ -5,7 +5,6 @@ import (
 	"code.holdonbush.top/ServerFramework/IPCWork"
 	"code.holdonbush.top/ServerFramework/ServerManager"
 	log "github.com/sirupsen/logrus"
-	"time"
 )
 
 type TestServer1 struct {
@@ -13,80 +12,36 @@ type TestServer1 struct {
 	Id       int
 	Port     int
 	Name     string
-	logger   *log.Entry
-	created  bool
-	status   int
-	close    chan int
 	trigger  bool
-	ipc      *IPCWork.IPCManager
 }
 
-func NewTestServer1() *TestServer1 {
+func NewTestServer1(id,port int, name ...string) *TestServer1 {
 	t := new(TestServer1)
-	t.Id = 1
-	t.Port = 4050
-	t.Name = "TestServer1"
-	t.logger = log.WithFields(log.Fields{"Server":"TestServer1"})
-	t.created = false
-	t.close = make(chan int, 2)
+	t.Id = id
+	t.Port = port
+	if len(name) >= 1 {
+		t.Name = name[0]
+	} else {
+		t.Name = "TestServer1"
+	}
+	logger := log.WithFields(log.Fields{"Server":"TestServer1"})
+	c := make(chan int, 2)
 	t.trigger = false
-	t.ipc = IPCWork.NewIPCManager(t.Id)
+	ipc := IPCWork.NewIPCManager(t.Id)
+	status := ServerManager.UnCreated
 
-	t.ServerModule = new(ServerManager.ServerModule)
-	t.ServerModule.MInfo = ServerManager.ServerModuleInfo{
+	Info := ServerManager.ServerModuleInfo{
 		Id:   t.Id,
 		Name: t.Name,
 		Port: t.Port,
 	}
+	t.ServerModule = ServerManager.NewServerModule(Info,logger,status,c,ipc)
 
 	return t
 }
 
-func (server *TestServer1)GetId() int {
-	return server.Id
-}
-func (server *TestServer1)Create() {
-	if server.status == ServerManager.UnCreated || server.status == ServerManager.Released {
-		server.created = true
-		server.status = ServerManager.Created
-		server.logger.Info("Server Created")
-	}
-}
-func (server *TestServer1)Release() {
-	if server.status == ServerManager.Released {
-		return
-	}
-	server.status = ServerManager.Released
-	server.logger.Info("Server Released")
-}
-func (server *TestServer1)Start() {
-	if server.status == ServerManager.Running {
-		return
-	}
-	server.status = ServerManager.Running
-	go func(server *TestServer1) {
-		for true {
-			select {
-			case _ = <-server.close:
-				return
-			default:
-				server.Tick()
-				time.Sleep(time.Second)
-			}
-		}
-	}(server)
-	server.logger.Info("Server Started")
-}
-func (server *TestServer1)Stop() {
-	if server.status == ServerManager.Stopped {
-		return
-	}
-	server.status = ServerManager.Stopped
-	server.close <- 1
-	server.logger.Info("Server Stopped")
-}
 func (server *TestServer1)Tick() {
-	server.logger.Info("Tick")
+	server.Logger.Info("Tick")
 	if !server.trigger {
 		server.trigger = true
 		args := DataFormat.Args{
@@ -94,19 +49,8 @@ func (server *TestServer1)Tick() {
 			Phase2: "v",
 		}
 		reply := DataFormat.Reply{V:0}
-		server.ipc.CallRpc(&args,&reply,4051,"TestServer2.TestFunc")
-		server.logger.Info(reply)
+		server.Ipc.CallRpc(&args,&reply,4051,"TestServer2.TestFunc")
+		server.Logger.Info(reply)
 	}
 
-}
-func (server *TestServer1)IsCreated() bool {
-	return server.created
-}
-
-func (server *TestServer1)GetModuleInfo() ServerManager.ServerModuleInfo {
-	return server.ServerModule.MInfo
-}
-
-func (server *TestServer1)GetStatus() int {
-	return server.status
 }
