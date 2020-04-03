@@ -1,5 +1,6 @@
 syntax = "proto3";
 package DataFormat;
+option go_package = ".;DataFormat";
 
 message LoginMsg {
     int32 uid = 1;
@@ -7,6 +8,29 @@ message LoginMsg {
 }
 
 message LoginRsp {
-    fixed32 ret = 1;
-    string msg = 2;
+    ReturnCode ret = 1;
+    UserData userdata = 2;
+}
+
+message ReturnCode {
+    int32 code = 1;
+    string info = 2;
+}
+
+message UserData {
+    fixed32 id = 1;
+    string name = 2;
+    string pwd = 3;
+    int32 level = 4;
+    int32 defaultGameId = 5;
+}
+
+message HeartBeatReq {
+    int32 ping = 1;
+    int32 timestamp = 2;
+}
+
+message HeartBeatRsp {
+    ReturnCode ret = 1;
+    int32 timestamp = 2;
 }

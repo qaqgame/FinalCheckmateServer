@@ -43,8 +43,13 @@ func (serverDemo *ServerDemo) OnLogin(session Server.ISession, index uint32, tms
 	//log.Println(time.Now().Unix(),"received")
 	serverDemo.logger.Debug("OnLogin of ServerDemo, uid",t.Uid,"name",t.Name)
 	res := DataFormat.LoginRsp{}
+	/*
 	res.Ret = session.GetId()
 	res.Msg = "success"
-
+	*/
+	res.Ret = &DataFormat.SuccessReturn
+	res.Userdata = &DataFormat.UserData{
+		Id: session.GetId(),
+	}
 	serverDemo.netManager.Send(session,index,DataFormat.LoginRes,&res)
 }

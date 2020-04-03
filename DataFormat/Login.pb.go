@@ -85,8 +85,8 @@ type LoginRsp struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Ret uint32 `protobuf:"fixed32,1,opt,name=ret,proto3" json:"ret,omitempty"`
-	Msg string `protobuf:"bytes,2,opt,name=msg,proto3" json:"msg,omitempty"`
+	Ret      *ReturnCode `protobuf:"bytes,1,opt,name=ret,proto3" json:"ret,omitempty"`
+	Userdata *UserData   `protobuf:"bytes,2,opt,name=userdata,proto3" json:"userdata,omitempty"`
 }
 
 func (x *LoginRsp) Reset() {
@@ -121,18 +121,262 @@ func (*LoginRsp) Descriptor() ([]byte, []int) {
 	return file_Login_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *LoginRsp) GetRet() uint32 {
+func (x *LoginRsp) GetRet() *ReturnCode {
 	if x != nil {
 		return x.Ret
+	}
+	return nil
+}
+
+func (x *LoginRsp) GetUserdata() *UserData {
+	if x != nil {
+		return x.Userdata
+	}
+	return nil
+}
+
+type ReturnCode struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Code int32  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
+	Info string `protobuf:"bytes,2,opt,name=info,proto3" json:"info,omitempty"`
+}
+
+func (x *ReturnCode) Reset() {
+	*x = ReturnCode{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_Login_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ReturnCode) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReturnCode) ProtoMessage() {}
+
+func (x *ReturnCode) ProtoReflect() protoreflect.Message {
+	mi := &file_Login_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReturnCode.ProtoReflect.Descriptor instead.
+func (*ReturnCode) Descriptor() ([]byte, []int) {
+	return file_Login_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *ReturnCode) GetCode() int32 {
+	if x != nil {
+		return x.Code
 	}
 	return 0
 }
 
-func (x *LoginRsp) GetMsg() string {
+func (x *ReturnCode) GetInfo() string {
 	if x != nil {
-		return x.Msg
+		return x.Info
 	}
 	return ""
+}
+
+type UserData struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id            uint32 `protobuf:"fixed32,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name          string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Pwd           string `protobuf:"bytes,3,opt,name=pwd,proto3" json:"pwd,omitempty"`
+	Level         int32  `protobuf:"varint,4,opt,name=level,proto3" json:"level,omitempty"`
+	DefaultGameId int32  `protobuf:"varint,5,opt,name=defaultGameId,proto3" json:"defaultGameId,omitempty"`
+}
+
+func (x *UserData) Reset() {
+	*x = UserData{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_Login_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *UserData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserData) ProtoMessage() {}
+
+func (x *UserData) ProtoReflect() protoreflect.Message {
+	mi := &file_Login_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserData.ProtoReflect.Descriptor instead.
+func (*UserData) Descriptor() ([]byte, []int) {
+	return file_Login_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *UserData) GetId() uint32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *UserData) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *UserData) GetPwd() string {
+	if x != nil {
+		return x.Pwd
+	}
+	return ""
+}
+
+func (x *UserData) GetLevel() int32 {
+	if x != nil {
+		return x.Level
+	}
+	return 0
+}
+
+func (x *UserData) GetDefaultGameId() int32 {
+	if x != nil {
+		return x.DefaultGameId
+	}
+	return 0
+}
+
+type HeartBeatReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Ping      int32 `protobuf:"varint,1,opt,name=ping,proto3" json:"ping,omitempty"`
+	Timestamp int32 `protobuf:"varint,2,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
+}
+
+func (x *HeartBeatReq) Reset() {
+	*x = HeartBeatReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_Login_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *HeartBeatReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*HeartBeatReq) ProtoMessage() {}
+
+func (x *HeartBeatReq) ProtoReflect() protoreflect.Message {
+	mi := &file_Login_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use HeartBeatReq.ProtoReflect.Descriptor instead.
+func (*HeartBeatReq) Descriptor() ([]byte, []int) {
+	return file_Login_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *HeartBeatReq) GetPing() int32 {
+	if x != nil {
+		return x.Ping
+	}
+	return 0
+}
+
+func (x *HeartBeatReq) GetTimestamp() int32 {
+	if x != nil {
+		return x.Timestamp
+	}
+	return 0
+}
+
+type HeartBeatRsp struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Ret       *ReturnCode `protobuf:"bytes,1,opt,name=ret,proto3" json:"ret,omitempty"`
+	Timestamp int32       `protobuf:"varint,2,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
+}
+
+func (x *HeartBeatRsp) Reset() {
+	*x = HeartBeatRsp{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_Login_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *HeartBeatRsp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*HeartBeatRsp) ProtoMessage() {}
+
+func (x *HeartBeatRsp) ProtoReflect() protoreflect.Message {
+	mi := &file_Login_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use HeartBeatRsp.ProtoReflect.Descriptor instead.
+func (*HeartBeatRsp) Descriptor() ([]byte, []int) {
+	return file_Login_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *HeartBeatRsp) GetRet() *ReturnCode {
+	if x != nil {
+		return x.Ret
+	}
+	return nil
+}
+
+func (x *HeartBeatRsp) GetTimestamp() int32 {
+	if x != nil {
+		return x.Timestamp
+	}
+	return 0
 }
 
 var File_Login_proto protoreflect.FileDescriptor
@@ -142,11 +386,36 @@ var file_Login_proto_rawDesc = []byte{
 	0x61, 0x74, 0x61, 0x46, 0x6f, 0x72, 0x6d, 0x61, 0x74, 0x22, 0x30, 0x0a, 0x08, 0x4c, 0x6f, 0x67,
 	0x69, 0x6e, 0x4d, 0x73, 0x67, 0x12, 0x10, 0x0a, 0x03, 0x75, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01,
 	0x28, 0x05, 0x52, 0x03, 0x75, 0x69, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18,
-	0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x22, 0x2e, 0x0a, 0x08, 0x4c,
-	0x6f, 0x67, 0x69, 0x6e, 0x52, 0x73, 0x70, 0x12, 0x10, 0x0a, 0x03, 0x72, 0x65, 0x74, 0x18, 0x01,
-	0x20, 0x01, 0x28, 0x07, 0x52, 0x03, 0x72, 0x65, 0x74, 0x12, 0x10, 0x0a, 0x03, 0x6d, 0x73, 0x67,
-	0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6d, 0x73, 0x67, 0x62, 0x06, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x33,
+	0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x22, 0x66, 0x0a, 0x08, 0x4c,
+	0x6f, 0x67, 0x69, 0x6e, 0x52, 0x73, 0x70, 0x12, 0x28, 0x0a, 0x03, 0x72, 0x65, 0x74, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x0b, 0x32, 0x16, 0x2e, 0x44, 0x61, 0x74, 0x61, 0x46, 0x6f, 0x72, 0x6d, 0x61,
+	0x74, 0x2e, 0x52, 0x65, 0x74, 0x75, 0x72, 0x6e, 0x43, 0x6f, 0x64, 0x65, 0x52, 0x03, 0x72, 0x65,
+	0x74, 0x12, 0x30, 0x0a, 0x08, 0x75, 0x73, 0x65, 0x72, 0x64, 0x61, 0x74, 0x61, 0x18, 0x02, 0x20,
+	0x01, 0x28, 0x0b, 0x32, 0x14, 0x2e, 0x44, 0x61, 0x74, 0x61, 0x46, 0x6f, 0x72, 0x6d, 0x61, 0x74,
+	0x2e, 0x55, 0x73, 0x65, 0x72, 0x44, 0x61, 0x74, 0x61, 0x52, 0x08, 0x75, 0x73, 0x65, 0x72, 0x64,
+	0x61, 0x74, 0x61, 0x22, 0x34, 0x0a, 0x0a, 0x52, 0x65, 0x74, 0x75, 0x72, 0x6e, 0x43, 0x6f, 0x64,
+	0x65, 0x12, 0x12, 0x0a, 0x04, 0x63, 0x6f, 0x64, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52,
+	0x04, 0x63, 0x6f, 0x64, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x69, 0x6e, 0x66, 0x6f, 0x18, 0x02, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x04, 0x69, 0x6e, 0x66, 0x6f, 0x22, 0x7c, 0x0a, 0x08, 0x55, 0x73, 0x65,
+	0x72, 0x44, 0x61, 0x74, 0x61, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x07, 0x52, 0x02, 0x69, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x02, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x70, 0x77, 0x64,
+	0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x70, 0x77, 0x64, 0x12, 0x14, 0x0a, 0x05, 0x6c,
+	0x65, 0x76, 0x65, 0x6c, 0x18, 0x04, 0x20, 0x01, 0x28, 0x05, 0x52, 0x05, 0x6c, 0x65, 0x76, 0x65,
+	0x6c, 0x12, 0x24, 0x0a, 0x0d, 0x64, 0x65, 0x66, 0x61, 0x75, 0x6c, 0x74, 0x47, 0x61, 0x6d, 0x65,
+	0x49, 0x64, 0x18, 0x05, 0x20, 0x01, 0x28, 0x05, 0x52, 0x0d, 0x64, 0x65, 0x66, 0x61, 0x75, 0x6c,
+	0x74, 0x47, 0x61, 0x6d, 0x65, 0x49, 0x64, 0x22, 0x40, 0x0a, 0x0c, 0x48, 0x65, 0x61, 0x72, 0x74,
+	0x42, 0x65, 0x61, 0x74, 0x52, 0x65, 0x71, 0x12, 0x12, 0x0a, 0x04, 0x70, 0x69, 0x6e, 0x67, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x04, 0x70, 0x69, 0x6e, 0x67, 0x12, 0x1c, 0x0a, 0x09, 0x74,
+	0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x09,
+	0x74, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x22, 0x56, 0x0a, 0x0c, 0x48, 0x65, 0x61,
+	0x72, 0x74, 0x42, 0x65, 0x61, 0x74, 0x52, 0x73, 0x70, 0x12, 0x28, 0x0a, 0x03, 0x72, 0x65, 0x74,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x16, 0x2e, 0x44, 0x61, 0x74, 0x61, 0x46, 0x6f, 0x72,
+	0x6d, 0x61, 0x74, 0x2e, 0x52, 0x65, 0x74, 0x75, 0x72, 0x6e, 0x43, 0x6f, 0x64, 0x65, 0x52, 0x03,
+	0x72, 0x65, 0x74, 0x12, 0x1c, 0x0a, 0x09, 0x74, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x09, 0x74, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d,
+	0x70, 0x42, 0x0e, 0x5a, 0x0c, 0x2e, 0x3b, 0x44, 0x61, 0x74, 0x61, 0x46, 0x6f, 0x72, 0x6d, 0x61,
+	0x74, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -161,17 +430,24 @@ func file_Login_proto_rawDescGZIP() []byte {
 	return file_Login_proto_rawDescData
 }
 
-var file_Login_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_Login_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_Login_proto_goTypes = []interface{}{
-	(*LoginMsg)(nil), // 0: DataFormat.LoginMsg
-	(*LoginRsp)(nil), // 1: DataFormat.LoginRsp
+	(*LoginMsg)(nil),     // 0: DataFormat.LoginMsg
+	(*LoginRsp)(nil),     // 1: DataFormat.LoginRsp
+	(*ReturnCode)(nil),   // 2: DataFormat.ReturnCode
+	(*UserData)(nil),     // 3: DataFormat.UserData
+	(*HeartBeatReq)(nil), // 4: DataFormat.HeartBeatReq
+	(*HeartBeatRsp)(nil), // 5: DataFormat.HeartBeatRsp
 }
 var file_Login_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	2, // 0: DataFormat.LoginRsp.ret:type_name -> DataFormat.ReturnCode
+	3, // 1: DataFormat.LoginRsp.userdata:type_name -> DataFormat.UserData
+	2, // 2: DataFormat.HeartBeatRsp.ret:type_name -> DataFormat.ReturnCode
+	3, // [3:3] is the sub-list for method output_type
+	3, // [3:3] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_Login_proto_init() }
@@ -204,6 +480,54 @@ func file_Login_proto_init() {
 				return nil
 			}
 		}
+		file_Login_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ReturnCode); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_Login_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*UserData); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_Login_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*HeartBeatReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_Login_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*HeartBeatRsp); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -211,7 +535,7 @@ func file_Login_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_Login_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
