@@ -39,7 +39,7 @@ type ServerUserData struct {
 // CheckOnline : check client status(if online)
 func (serveruserdata *ServerUserData) CheckOnline() bool {
 	if serveruserdata.IfOnline {
-		t := time.Now().Unix() - serveruserdata.LastHeartBeatTime
+		t := (time.Now().UnixNano()/int64(time.Millisecond)) - serveruserdata.LastHeartBeatTime
 		if t > Timeout {
 			serveruserdata.IfOnline = false
 		}

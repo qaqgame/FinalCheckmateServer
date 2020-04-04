@@ -39,12 +39,11 @@ func (onlineManager *OnlineManager) Clean() {
 
 // Dump :
 func (onlineManager *OnlineManager) Dump() {
-	for _,v := range onlineManager.mapUserData {
+	for _, v := range onlineManager.mapUserData {
 		onlineManager.logger.Info("user id :", v.Userdata.Id, "user name :", v.Userdata.Name)
 	}
-	onlineManager.logger.Info("num of player :",len(onlineManager.mapUserData))
+	onlineManager.logger.Info("num of player :", len(onlineManager.mapUserData))
 }
-
 
 // OnLoginRequest :
 func (onlineManager *OnlineManager) OnLoginRequest(session Server.ISession, index uint32, tmsg proto.Message) {
@@ -52,32 +51,39 @@ func (onlineManager *OnlineManager) OnLoginRequest(session Server.ISession, inde
 
 	success := false
 	loginmsg := tmsg.(*DataFormat.LoginMsg)
+
+	onlineManager.logger.Info("Func OnLoginResquest, loginmsg: ", loginmsg)
+	onlineManager.logger.Info("login message id: ", loginmsg.Uid)
 	// Get a DataFormat.ComData type info
 	ud := onlineManager.GetUserDataByName(loginmsg.Name)
 	if ud == nil {
 		// create a DataFormat.ComData type info
 		ud = onlineManager.CreateUserData(session.GetId(), loginmsg.Name)
 		activeUser(session, ud)
+		onlineManager.logger.Info("login new user. user id: ", ud.Userdata.Id, " session.uid", session.GetUid())
 		success = true
 	} else {
-		if loginmsg.Uid == int32(ud.Userdata.Id) {
+		if loginmsg.Uid == ud.Userdata.Id {
 			// 重连
 			activeUser(session, ud)
+			onlineManager.logger.Info("reconnect. user id: ", ud.Userdata.Id, " session.uid", session.GetUid())
 			success = true
 		} else {
 			// todo : - 考虑是否需要该功能 - 抢占别人的名字
 			if !ud.Serveruserdata.IfOnline {
 				activeUser(session, ud)
+				onlineManager.logger.Info("Hijack other's name: user id", ud.Userdata.Id, " session.uid", session.GetUid())
 				success = true
 			}
-			
+
 		}
 	}
 	if success {
 		response := new(DataFormat.LoginRsp)
 		response.Ret = &DataFormat.SuccessReturn
 		response.Userdata = &ud.Userdata
-		onlineManager.netmanager.Send(session, index, DataFormat.LoginRes,response)
+		onlineManager.logger.Debug("return message: ", response)
+		onlineManager.netmanager.Send(session, index, DataFormat.LoginRes, response)
 	} else {
 		response := new(DataFormat.LoginRsp)
 		response.Ret = new(DataFormat.ReturnCode)
@@ -87,8 +93,8 @@ func (onlineManager *OnlineManager) OnLoginRequest(session Server.ISession, inde
 	}
 }
 
-func activeUser(session Server.ISession,userdata *DataFormat.ComData) {
-	userdata.Serveruserdata.LastHeartBeatTime = time.Now().Unix()
+func activeUser(session Server.ISession, userdata *DataFormat.ComData) {
+	userdata.Serveruserdata.LastHeartBeatTime = time.Now().UnixNano() / int64(time.Millisecond)
 	userdata.Serveruserdata.Sid = session.GetId()
 	session.SetAuth(userdata.Userdata.Id)
 }
@@ -97,9 +103,10 @@ func activeUser(session Server.ISession,userdata *DataFormat.ComData) {
 func (onlineManager *OnlineManager) OnHeartBeatRequest(session Server.ISession, index uint32, tmsg proto.Message) {
 	onlineManager.logger.Info("invoke into OnHeartBeatRequest")
 	heartbeatreq := tmsg.(*DataFormat.HeartBeatReq)
+	onlineManager.logger.Info("HeartBeatReq info: ", heartbeatreq, " ", time.Now().UnixNano()/int64(time.Millisecond))
 	ud := onlineManager.GetUserDataByID(session.GetUid())
 	if ud != nil {
-		ud.Serveruserdata.LastHeartBeatTime = time.Now().Unix()
+		ud.Serveruserdata.LastHeartBeatTime = time.Now().UnixNano() / int64(time.Millisecond)
 		session.SetPing(uint32(heartbeatreq.Ping))
 		heartres := new(DataFormat.HeartBeatRsp)
 		heartres.Ret = &DataFormat.SuccessReturn
@@ -119,28 +126,27 @@ func (onlineManager *OnlineManager) Logout(session Server.ISession) {
 }
 
 // CreateUserData : create ComData type info
-func (onlineManager *OnlineManager)CreateUserData(id uint32, name string) *DataFormat.ComData {
+func (onlineManager *OnlineManager) CreateUserData(id uint32, name string) *DataFormat.ComData {
 	comdata := new(DataFormat.ComData)
 	comdata.Userdata.Name = name
 	comdata.Userdata.Id = id
-	comdata.Userdata.Pwd = "";
 	onlineManager.mapUserData[id] = comdata
 	return comdata
 }
 
 // ReleaseUserData : release info in map
 func (onlineManager *OnlineManager) ReleaseUserData(id uint32) {
-	delete(onlineManager.mapUserData,id)
+	delete(onlineManager.mapUserData, id)
 }
 
-// GetUserDataByID : 
+// GetUserDataByID :
 func (onlineManager *OnlineManager) GetUserDataByID(id uint32) *DataFormat.ComData {
 	return onlineManager.mapUserData[id]
 }
 
 // GetUserDataByName :
 func (onlineManager *OnlineManager) GetUserDataByName(name string) *DataFormat.ComData {
-	for _,v := range onlineManager.mapUserData {
+	for _, v := range onlineManager.mapUserData {
 		if v.Userdata.Name == name {
 			return v
 		}

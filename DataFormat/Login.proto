@@ -3,7 +3,7 @@ package DataFormat;
 option go_package = ".;DataFormat";
 
 message LoginMsg {
-    int32 uid = 1;
+    uint32 uid = 1;
     string name = 2;
 }
 
@@ -18,11 +18,8 @@ message ReturnCode {
 }
 
 message UserData {
-    fixed32 id = 1;
+    uint32 id = 1;
     string name = 2;
-    string pwd = 3;
-    int32 level = 4;
-    int32 defaultGameId = 5;
 }
 
 message HeartBeatReq {

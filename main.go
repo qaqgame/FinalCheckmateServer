@@ -1,15 +1,18 @@
 package main
 
 import (
+	"os"
 	"time"
 
 	"code.holdonbush.top/FinalCheckmateServer/ZoneServer"
 	_ "code.holdonbush.top/ServerFramework/Server"
 	"code.holdonbush.top/ServerFramework/ServerManager"
+	log "github.com/sirupsen/logrus"
 )
 
 func init() {
-
+	log.SetOutput(os.Stdout)
+	log.SetLevel(log.TraceLevel)
 }
 
 func main() {
@@ -29,6 +32,6 @@ func main() {
 
 	for true {
 		servermanager.Tick()
-		time.Sleep(time.Second)
+		time.Sleep(time.Microsecond)
 	}
 }
