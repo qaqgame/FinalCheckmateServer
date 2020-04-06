@@ -1,6 +1,7 @@
 package ZoneServer
 
 import (
+	"reflect"
 	"time"
 
 	"code.holdonbush.top/FinalCheckmateServer/DataFormat"
@@ -24,7 +25,7 @@ func NewOnlineManager(context *ServerContext) *OnlineManager {
 	onlineManager.netmanager.SetAuthCmd(DataFormat.LoginReq)
 	onlineManager.netmanager.AddListener(DataFormat.LoginReq, onlineManager.OnLoginRequest, new(DataFormat.LoginMsg))
 	onlineManager.netmanager.AddListener(DataFormat.HeartBeatRequset, onlineManager.OnHeartBeatRequest, new(DataFormat.HeartBeatReq))
-	onlineManager.netmanager.RegisterRPCMethod(onlineManager, "Logout")
+	onlineManager.netmanager.RegisterRPCMethod(onlineManager,reflect.ValueOf(onlineManager) ,"Logout")
 
 	onlineManager.mapUserData = make(map[uint32]*DataFormat.ComData)
 	onlineManager.logger = log.WithFields(log.Fields{"Server": "ZoneServer OnlineManager"})
@@ -34,6 +35,7 @@ func NewOnlineManager(context *ServerContext) *OnlineManager {
 
 // Clean : clean
 func (onlineManager *OnlineManager) Clean() {
+	onlineManager.mapUserData = make(map[uint32]*DataFormat.ComData)
 	onlineManager.netmanager = nil
 }
 

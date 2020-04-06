@@ -1,0 +1,130 @@
+syntax = "proto3";
+package DataFormat;
+option go_package = ".;DataFormat";
+
+message LoginMsg {
+    uint32 uid = 1;
+    string name = 2;
+}
+
+message LoginRsp {
+    ReturnCode ret = 1;
+    UserData userdata = 2;
+}
+
+message ReturnCode {
+    int32 code = 1;
+    string info = 2;
+}
+
+// id phase in UserDate means the session's id the session between client and server
+message UserData {
+    uint32 id = 1;
+    string name = 2;
+}
+
+message HeartBeatReq {
+    int32 ping = 1;
+    int32 timestamp = 2;
+}
+
+message HeartBeatRsp {
+    ReturnCode ret = 1;
+    int32 timestamp = 2;
+}
+
+// CharacData : characters' data in game
+message CharacData {
+    int32 id = 1;
+    string name = 2;
+}
+
+// PlayerData : players' data
+message PlayerData {
+    // id - means the id allocated in the game
+    uint32 id = 1;
+    // uid - the plyaer's user id
+    uint32 uid = 2;
+    // name - player's name
+    string name = 3;
+    // characdata - character player used in game
+    // CharacData characdata = 4;
+    // teamid - id of team
+    uint32 teamid = 4;
+    // score - score
+    // int32 score = 6;
+    // ai - ID of AI
+    // int32 ai = 7;
+    // sid - session id between the player and server
+    // uint32 sid = 8;
+    bool isReady = 5;
+}
+
+// RoomData : room data
+message RoomData {
+    // id - room id
+    uint32 id = 1;
+    // name - room name
+    string name = 2;
+    // mode - game mode
+    string mode = 3;
+    // mapName - mapname
+    string mapName = 4;
+    // players - players
+    repeated PlayerData players = 5;
+    // maxplayercount - max player count
+    int32 maxplayercount = 6;
+    // teams - num of each team
+    repeated int32 team = 7;
+}
+
+// RoomListData : room list
+message RoomListData {
+    repeated RoomData rooms = 1;
+}
+
+// MapData : 
+message MapData {
+    // id - map id
+    int32 id = 1;
+    // name - map name
+    string name = 2;
+}
+
+// GameParam :
+message GameParam {
+    // id - game id
+    uint32 id = 1;
+    // map - map of this game
+    MapData map = 2;
+    // randseed - client use same randseed
+    int32 randseed = 3;
+    // gamemode - mode of game
+    GameModes gamemode = 4;
+    // limitedTime - limited time
+    int32 limitedTime = 5;
+}
+
+// game modes
+enum GameModes {
+    EndLessPvE = 0;
+    TimeLimitPvE = 1;
+    EndLessPvP = 2;
+    TimeLimitPvP = 3;
+}
+
+// PVPStartParam :
+message PVPStartParam {
+    // gameParam - 
+    GameParam gameParam = 1;
+    // players - players of the singal game
+    repeated PlayerData players = 2;
+}
+
+// GamesServerStartParam :
+message GamesServerStartParam {
+    uint32 roomID = 1;
+    int32 authID = 2;
+    repeated uint32 listPlayerID = 3;
+    repeated uint32 listPlayerFSPSessionID = 4;
+}

@@ -31,7 +31,7 @@ func main() {
 	servermanager.StartAllServer1()
 
 	for true {
-		servermanager.Tick()
-		time.Sleep(time.Microsecond)
+		// servermanager.Tick()
+		time.Sleep(time.Millisecond)
 	}
 }

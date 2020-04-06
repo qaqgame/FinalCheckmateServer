@@ -9,6 +9,8 @@ import (
 const (
 	// Timeout : mean for the time internal for checking client status
 	Timeout int64 = 40
+	// LimiedTime : limited time
+	LimiedTime int32 = 180
 	// ZoneServer : zone server
 	ZoneServer = 1
 	// GameServer : game server
