@@ -5,6 +5,8 @@ import (
 	"time"
 
 	"code.holdonbush.top/FinalCheckmateServer/ZoneServer"
+	_ "code.holdonbush.top/FinalCheckmateServer/db"
+	"code.holdonbush.top/FinalCheckmateServer/gameserver"
 	_ "code.holdonbush.top/ServerFramework/Server"
 	"code.holdonbush.top/ServerFramework/ServerManager"
 	log "github.com/sirupsen/logrus"
@@ -26,7 +28,9 @@ func main() {
 
 	// servermanager.StartAllServer1()
 	zoneServer := ZoneServer.NewZoneServer(1, 4050)
+	gameserver := gameserver.NewGameServer(2, 4051)
 	servermanager.AddServer(zoneServer)
+	servermanager.AddServer(gameserver)
 
 	servermanager.StartAllServer1()
 

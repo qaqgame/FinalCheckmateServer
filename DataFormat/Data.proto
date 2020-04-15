@@ -128,3 +128,4 @@ message GamesServerStartParam {
     repeated uint32 listPlayerID = 3;
     repeated uint32 listPlayerFSPSessionID = 4;
 }
+

@@ -1,4 +1,4 @@
-package TestServer1
+package testServer1
 
 import (
 	"code.holdonbush.top/FinalCheckmateServer/DataFormat"
@@ -9,13 +9,13 @@ import (
 
 type TestServer1 struct {
 	*ServerManager.ServerModule
-	Id       int
-	Port     int
-	Name     string
-	trigger  bool
+	Id      int
+	Port    int
+	Name    string
+	trigger bool
 }
 
-func NewTestServer1(id,port int, name ...string) *TestServer1 {
+func NewTestServer1(id, port int, name ...string) *TestServer1 {
 	t := new(TestServer1)
 	t.Id = id
 	t.Port = port
@@ -24,7 +24,7 @@ func NewTestServer1(id,port int, name ...string) *TestServer1 {
 	} else {
 		t.Name = "TestServer1"
 	}
-	logger := log.WithFields(log.Fields{"Server":"TestServer1"})
+	logger := log.WithFields(log.Fields{"Server": "TestServer1"})
 	c := make(chan int, 2)
 	t.trigger = false
 	ipc := IPCWork.NewIPCManager(t.Id)
@@ -35,12 +35,12 @@ func NewTestServer1(id,port int, name ...string) *TestServer1 {
 		Name: t.Name,
 		Port: t.Port,
 	}
-	t.ServerModule = ServerManager.NewServerModule(Info,logger,status,c,ipc)
+	t.ServerModule = ServerManager.NewServerModule(Info, logger, status, c, ipc)
 
 	return t
 }
 
-func (server *TestServer1)Tick() {
+func (server *TestServer1) Tick() {
 	server.Logger.Info("Tick")
 	if !server.trigger {
 		server.trigger = true
@@ -48,8 +48,8 @@ func (server *TestServer1)Tick() {
 			Phase:  1,
 			Phase2: "v",
 		}
-		reply := DataFormat.Reply{V:0}
-		server.Ipc.CallRpc(&args,&reply,4051,"TestServer2.TestFunc")
+		reply := DataFormat.Reply{V: 0}
+		server.Ipc.CallRpc(&args, &reply, 4051, "TestServer2.TestFunc")
 		server.Logger.Info(reply)
 	}
 
