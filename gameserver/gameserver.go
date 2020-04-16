@@ -10,8 +10,9 @@ import (
 // GameServer : 游戏服务器
 type GameServer struct {
 	*ServerManager.ServerModule
-	context       *ServerContext
-	logger        *logrus.Entry
+	context     *ServerContext
+	gamemanager *GameManager
+	logger      *logrus.Entry
 }
 
 // NewGameServer :
@@ -22,7 +23,9 @@ func NewGameServer(id, port int, name ...string) *GameServer {
 	gameserver.context.Fsp = fsplite.NewFSPManager(port)
 	gameserver.context.Ipc = IPCWork.NewIPCManager(id)
 
-	gameserver.logger = logrus.WithFields(logrus.Fields{"Server":"GameServer"})
+	gameserver.gamemanager = NewGameManager(gameserver.context)
+
+	gameserver.logger = logrus.WithFields(logrus.Fields{"Server": "GameServer"})
 
 	tname := "GameServer"
 	if len(name) >= 1 {
@@ -30,14 +33,14 @@ func NewGameServer(id, port int, name ...string) *GameServer {
 	}
 
 	Info := ServerManager.ServerModuleInfo{
-		Id: id,
+		Id:   id,
 		Name: tname,
 		Port: port,
 	}
 	c := make(chan int, 2)
 	gameserver.ServerModule = ServerManager.NewServerModule(Info, gameserver.logger, ServerManager.UnCreated, c, gameserver.context.Ipc)
 
-
+	// gameserver.context.Ipc.RegisterRPC(gameserver)
 	return gameserver
 }
 
@@ -52,7 +55,9 @@ func (gameserver *GameServer) Stop() {
 		gameserver.context.Ipc.Clean()
 		gameserver.context.Ipc = nil
 	}
-	
+
+	gameserver.gamemanager.Clean()
+
 }
 
 // Tick : tick

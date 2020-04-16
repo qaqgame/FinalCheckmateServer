@@ -3,6 +3,7 @@ package ZoneServer
 import (
 	"bufio"
 	"fmt"
+	"net/rpc"
 	"os"
 	"reflect"
 
@@ -19,6 +20,7 @@ type ZoneServer struct {
 	context       *ServerContext
 	onlineManager *OnlineManager
 	roomManager   *RoomManager
+	rpcalls       *rpc.Call
 }
 
 // NewZoneServer :
@@ -48,12 +50,15 @@ func NewZoneServer(id, port int, name ...string) *ZoneServer {
 	zoneServer.context = tcontext
 	zoneServer.onlineManager = tonlineManager
 	zoneServer.roomManager = NewRoomManager(tcontext)
+	zoneServer.rpcalls = nil
 
 	zoneServer.context.Net.RegisterRPCMethods(zoneServer, reflect.ValueOf(zoneServer), "UpdateRoomList", "CreateRoom", "JoinRoom", "ExitRoom", "RoomReady", "StartGame", "ChangeTeam", "UpdateRoomInfo")
 
 	go zoneServer.ShowDump()
 	// zoneServer.context.Ipc.RegisterRPC(zoneServer)
 	zoneServer.DefaultCreateRoom()
+
+	go zoneServer.OnFininshRpcall()
 	return zoneServer
 }
 
@@ -201,13 +206,37 @@ func (zoneServer *ZoneServer) StartGame(session Server.ISession, roomID uint32) 
 	room := zoneServer.roomManager.GetRoom(roomID)
 	if room != nil {
 		if room.CanStartGame() {
-			param := new(DataFormat.PVPStartParam)
+			// Create RPC Args
+			creategame := new(DataFormat.CreateGame)
+			creategame.PlayerList = make([]uint32, 0)
+			creategame.RoomID = roomID
+			creategame.AuthID = -2
+			for _,v := range room.Data.Players {
+				creategame.PlayerList = append(creategame.PlayerList, v.Uid)
+			}
 
-			param.GameParam = room.GetGameParam()
-			param.Players = room.Data.GetPlayers()
+			// New a RPC Reply
+			reply := new(DataFormat.Reply)
+			ok := zoneServer.context.Ipc.CallRpc(&creategame, reply, 4051, "RPCStartGame")
+			if ok == true {
+				param := new(DataFormat.PVPStartParam)
+				// TODO:
+				var a interface{} = reply.Fspparam
+				param.Fspparam = a.(*DataFormat.FSPParam)
+				param.GameParam = room.GetGameParam()
+				param.Players = room.Data.GetPlayers()
 
-			listSession := room.GetSessionList()
-			zoneServer.context.Net.InvokeBroadCast(listSession, "NotifyGameStart", param)
+				// listSession := room.GetSessionList()
+				for _,v := range param.Players {
+					session := room.GetSeesion(v.GetUid())
+					param.Fspparam.Sid = reply.P2S[v.GetUid()]
+					zoneServer.context.Net.Invoke(session, "NotifyGameStart", param)
+				}
+				// zoneServer.context.Net.InvokeBroadCast(listSession, "NotifyGameStart", param)
+			}
+			// zoneServer.rpcalls = zoneServer.context.Ipc.CallRpcAsync(creategame, reply, 4051, "RPCStartGame")
+
+			
 
 			// invoke gameserver via IPC
 
@@ -246,5 +275,19 @@ func (zoneServer *ZoneServer) UpdateRoomInfo(session Server.ISession, roomID uin
 		zoneServer.context.Net.InvokeBroadCast(listSession, "NotifyRoomUpdate", room.Data)
 	} else {
 		zoneServer.context.Net.ReturnError("room not exist", roomID)
+	}
+}
+
+// OnFininshRpcall :
+func (zoneServer *ZoneServer) OnFininshRpcall() {
+	for true {
+		if zoneServer.rpcalls == nil {
+			continue
+		}
+		select {
+		case replyCall := <-zoneServer.rpcalls.Done:
+			// TODO:
+			_ = replyCall.Reply.(*DataFormat.Reply)
+		}
 	}
 }

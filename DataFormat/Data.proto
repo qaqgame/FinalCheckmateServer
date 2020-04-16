@@ -115,10 +115,12 @@ enum GameModes {
 
 // PVPStartParam :
 message PVPStartParam {
+    //fspparam -
+    FSPParam fspparam = 1;
     // gameParam - 
-    GameParam gameParam = 1;
+    GameParam gameParam = 2;
     // players - players of the singal game
-    repeated PlayerData players = 2;
+    repeated PlayerData players = 3;
 }
 
 // GamesServerStartParam :
@@ -129,3 +131,21 @@ message GamesServerStartParam {
     repeated uint32 listPlayerFSPSessionID = 4;
 }
 
+// FSPParam ：
+message FSPParam {
+    string host = 1;
+    int32 port = 2;
+    uint32 sid = 3;
+    int32 serverFrameInterval = 4;
+    int32 serverTimeout = 5;
+    // clientFrameRateMultiple - rate between client and server frames
+    int32 clientFrameRateMultiple = 6;
+    int32 authID = 7;
+    bool useLocal = 8;
+    int32 maxFrameID = 9;
+    bool enableSpeedUp = 10;
+    int32 defaultSpeed = 11;
+    // jitterBufferSize - buffer size
+    int32 jitterBufferSize = 12;
+    bool enableAutoBuffer = 13;
+}
