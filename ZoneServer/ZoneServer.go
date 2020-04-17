@@ -286,7 +286,7 @@ func (zoneServer *ZoneServer) OnFininshRpcall() {
 		}
 		select {
 		case replyCall := <-zoneServer.rpcalls.Done:
-			// TODO:
+			// TODO: sync rpc
 			_ = replyCall.Reply.(*DataFormat.Reply)
 		}
 	}
