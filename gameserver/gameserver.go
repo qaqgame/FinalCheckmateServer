@@ -32,11 +32,10 @@ func NewGameServer(id, port int, name ...string) *GameServer {
 		tname = name[0]
 	}
 
-	Info := ServerManager.ServerModuleInfo{
-		Id:   id,
-		Name: tname,
-		Port: port,
-	}
+	Info := new(ServerManager.ServerModuleInfo)
+	Info.Id = id
+	Info.Port = port
+	Info.Name = tname
 	c := make(chan int, 2)
 	gameserver.ServerModule = ServerManager.NewServerModule(Info, gameserver.logger, ServerManager.UnCreated, c, gameserver.context.Ipc)
 

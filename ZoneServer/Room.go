@@ -2,6 +2,7 @@ package ZoneServer
 
 import (
 	"errors"
+	"sort"
 	"strconv"
 
 	"code.holdonbush.top/FinalCheckmateServer/DataFormat"
@@ -76,7 +77,7 @@ func (room *Room) AddPlayer(userID uint32, userName string, session Server.ISess
 			return errors.New("fulled")
 		}
 	}
-
+	sort.Sort(room)
 	for i := 0; i < len(room.Data.GetPlayers()); i++ {
 		room.Data.Players[i].Id = uint32(i + 1)
 	}
@@ -181,4 +182,22 @@ func (room *Room) GetGameParam() *DataFormat.GameParam {
 	param.Map.Name = "default map"
 
 	return param
+}
+
+// Sort
+
+// Len :
+func (room *Room) Len() int { return len(room.Data.Players) }
+
+// Swap :
+func (room *Room) Swap(i, j int) {
+	room.Data.Players[i], room.Data.Players[j] = room.Data.Players[j], room.Data.Players[i]
+}
+
+// Less :
+func (room *Room) Less(i, j int) bool {
+	if room.Data.Players[i].Teamid != room.Data.Players[j].Teamid {
+		return room.Data.Players[i].Teamid < room.Data.Players[j].Teamid
+	}
+	return room.Data.Players[i].Id < room.Data.Players[j].Id
 }

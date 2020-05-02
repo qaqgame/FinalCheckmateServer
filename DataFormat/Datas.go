@@ -19,7 +19,7 @@ const (
 
 var (
 	// SuccessReturn : Success response
-	SuccessReturn = ReturnCode{}
+	SuccessReturn = ReturnCode{Code: -1, Info: "Success"}
 	// UnknownError : unknown error
 	UnknownError = ReturnCode{Code: 1, Info: "UnknownError"}
 )
@@ -41,7 +41,7 @@ type ServerUserData struct {
 // CheckOnline : check client status(if online)
 func (serveruserdata *ServerUserData) CheckOnline() bool {
 	if serveruserdata.IfOnline {
-		t := (time.Now().UnixNano()/int64(time.Millisecond)) - serveruserdata.LastHeartBeatTime
+		t := (time.Now().UnixNano() / int64(time.Millisecond)) - serveruserdata.LastHeartBeatTime
 		if t > Timeout {
 			serveruserdata.IfOnline = false
 		}

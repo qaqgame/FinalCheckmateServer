@@ -30,11 +30,10 @@ func NewTestServer1(id, port int, name ...string) *TestServer1 {
 	ipc := IPCWork.NewIPCManager(t.Id)
 	status := ServerManager.UnCreated
 
-	Info := ServerManager.ServerModuleInfo{
-		Id:   t.Id,
-		Name: t.Name,
-		Port: t.Port,
-	}
+	Info := new(ServerManager.ServerModuleInfo)
+	Info.Id = id
+	Info.Port = port
+	Info.Name = t.Name
 	t.ServerModule = ServerManager.NewServerModule(Info, logger, status, c, ipc)
 
 	return t

@@ -2,16 +2,17 @@ package ZoneServer
 
 import (
 	"bufio"
-	"fmt"
-	"net/rpc"
-	"os"
-	"reflect"
-
 	"code.holdonbush.top/FinalCheckmateServer/DataFormat"
 	"code.holdonbush.top/ServerFramework/IPCWork"
 	"code.holdonbush.top/ServerFramework/Server"
 	"code.holdonbush.top/ServerFramework/ServerManager"
+	"fmt"
 	log "github.com/sirupsen/logrus"
+	"net/rpc"
+	"os"
+	"reflect"
+	"sort"
+	"time"
 )
 
 // ZoneServer : zoneserver
@@ -21,6 +22,8 @@ type ZoneServer struct {
 	onlineManager *OnlineManager
 	roomManager   *RoomManager
 	rpcalls       *rpc.Call
+	timerStop     chan int
+	timerIsRun    bool
 }
 
 // NewZoneServer :
@@ -40,25 +43,25 @@ func NewZoneServer(id, port int, name ...string) *ZoneServer {
 	if len(name) >= 1 {
 		tname = name[0]
 	}
-	Info := ServerManager.ServerModuleInfo{
-		Id:   id,
-		Name: tname,
-		Port: port,
-	}
+	Info := new(ServerManager.ServerModuleInfo)
+	Info.Id = id
+	Info.Port = port
+	Info.Name = tname
 	c := make(chan int, 2)
 	zoneServer.ServerModule = ServerManager.NewServerModule(Info, logger, ServerManager.UnCreated, c, ipcmanager)
 	zoneServer.context = tcontext
 	zoneServer.onlineManager = tonlineManager
 	zoneServer.roomManager = NewRoomManager(tcontext)
 	zoneServer.rpcalls = nil
+	zoneServer.timerStop = make(chan int, 5)
+	zoneServer.timerIsRun = false
 
-	zoneServer.context.Net.RegisterRPCMethods(zoneServer, reflect.ValueOf(zoneServer), "UpdateRoomList", "CreateRoom", "JoinRoom", "ExitRoom", "RoomReady", "StartGame", "ChangeTeam", "UpdateRoomInfo")
+	zoneServer.context.Net.RegisterRPCMethods(zoneServer, reflect.ValueOf(zoneServer), "UpdateRoomList", "CreateRoom", "JoinRoom", "ExitRoom", "RoomReady", "ChangeTeam", "UpdateRoomInfo")
 
 	go zoneServer.ShowDump()
 	// zoneServer.context.Ipc.RegisterRPC(zoneServer)
 	zoneServer.DefaultCreateRoom()
 
-	go zoneServer.OnFininshRpcall()
 	return zoneServer
 }
 
@@ -105,6 +108,7 @@ func (zoneServer *ZoneServer) Tick() {
 // ShowDump :
 func (zoneServer *ZoneServer) ShowDump() {
 	for true {
+		zoneServer.Logger.Debug("test input")
 		reader := bufio.NewReader(os.Stdin)
 		str, _ := reader.ReadString('\n')
 		if str[:len(str)-2] == "1" {
@@ -194,6 +198,20 @@ func (zoneServer *ZoneServer) RoomReady(session Server.ISession, roomID uint32, 
 		room.SetReady(userID, ready)
 		listSession := room.GetSessionList()
 		zoneServer.context.Net.InvokeBroadCast(listSession, "NotifyRoomUpdate", room.Data)
+
+		if room.IsAllReady() {
+			// 开始倒计时。
+			room.Data.Ready = true
+			if !zoneServer.timerIsRun {
+				go zoneServer.Timer(listSession, room)
+			}
+		} else {
+			room.Data.Ready = false
+			if zoneServer.timerIsRun {
+				zoneServer.timerStop <- 1
+			}
+		}
+
 	} else {
 		zoneServer.context.Net.ReturnError("room not exist", roomID)
 	}
@@ -201,8 +219,14 @@ func (zoneServer *ZoneServer) RoomReady(session Server.ISession, roomID uint32, 
 
 // StartGame :
 func (zoneServer *ZoneServer) StartGame(session Server.ISession, roomID uint32) {
-	// userID := session.GetUid()
 	zoneServer.Logger.Info("Invoke RPC function: StartGame")
+	//room := zoneServer.roomManager.GetRoom(roomID)
+}
+
+// StartGame1 :
+func (zoneServer *ZoneServer) StartGame1(session Server.ISession, roomID uint32) {
+	// userID := session.GetUid()
+	zoneServer.Logger.Info("Invoke RPC function: StartGame1")
 	room := zoneServer.roomManager.GetRoom(roomID)
 	if room != nil {
 		if room.CanStartGame() {
@@ -211,7 +235,7 @@ func (zoneServer *ZoneServer) StartGame(session Server.ISession, roomID uint32) 
 			creategame.PlayerList = make([]uint32, 0)
 			creategame.RoomID = roomID
 			creategame.AuthID = -2
-			for _,v := range room.Data.Players {
+			for _, v := range room.Data.Players {
 				creategame.PlayerList = append(creategame.PlayerList, v.Uid)
 			}
 
@@ -220,25 +244,17 @@ func (zoneServer *ZoneServer) StartGame(session Server.ISession, roomID uint32) 
 			ok := zoneServer.context.Ipc.CallRpc(&creategame, reply, 4051, "RPCStartGame")
 			if ok == true {
 				param := new(DataFormat.PVPStartParam)
-				// TODO:
+				//
 				var a interface{} = reply.Fspparam
 				param.Fspparam = a.(*DataFormat.FSPParam)
 				param.GameParam = room.GetGameParam()
 				param.Players = room.Data.GetPlayers()
-
-				// listSession := room.GetSessionList()
-				for _,v := range param.Players {
+				for _, v := range param.Players {
 					session := room.GetSeesion(v.GetUid())
 					param.Fspparam.Sid = reply.P2S[v.GetUid()]
 					zoneServer.context.Net.Invoke(session, "NotifyGameStart", param)
 				}
-				// zoneServer.context.Net.InvokeBroadCast(listSession, "NotifyGameStart", param)
 			}
-			// zoneServer.rpcalls = zoneServer.context.Ipc.CallRpcAsync(creategame, reply, 4051, "RPCStartGame")
-
-			
-
-			// invoke gameserver via IPC
 
 		} else {
 			zoneServer.context.Net.ReturnError("player unready", roomID)
@@ -260,7 +276,10 @@ func (zoneServer *ZoneServer) ChangeTeam(session Server.ISession, roomID uint32,
 				break
 			}
 		}
-
+		sort.Sort(room)
+		for i := 0; i < len(room.Data.GetPlayers()); i++ {
+			room.Data.Players[i].Id = uint32(i + 1)
+		}
 		listSession := room.GetSessionList()
 		zoneServer.context.Net.InvokeBroadCast(listSession, "NotifyRoomUpdate", room.Data)
 	}
@@ -288,6 +307,86 @@ func (zoneServer *ZoneServer) OnFininshRpcall() {
 		case replyCall := <-zoneServer.rpcalls.Done:
 			// TODO: sync rpc
 			_ = replyCall.Reply.(*DataFormat.Reply)
+		}
+	}
+}
+
+// Timer : Assistant Function - invoke client's update each second.
+func (zoneServer *ZoneServer) Timer(listSession []Server.ISession, room *Room) {
+	zoneServer.timerIsRun = true
+	tick := time.NewTicker(1 * time.Second)
+	defer tick.Stop()
+	var count int32 = 3
+	for {
+		select {
+		case <-tick.C:
+			room.Data.Time = count
+			// invoke client's update
+			zoneServer.context.Net.InvokeBroadCast(listSession, "NotifyRoomUpdate", room.Data)
+			if count == 0 {
+				// send msg to client
+				maskData := new(DataFormat.MaskData)
+				maskData.Pid = 1
+				maskData.EnemyMask = 0x00ff
+				maskData.FriendMask = 0xff00
+
+				playerTeamData := new(DataFormat.PlayerTeamData)
+				playerTeamData.Masks = make([]*DataFormat.MaskData, 0)
+				playerTeamData.Masks = append(playerTeamData.Masks, maskData)
+
+				// for _, v := range listSession {
+				// 	zoneServer.context.Net.Invoke(v, "NotifyGameStart", playerTeamData, v.GetUid())
+				// }
+
+				// start fsp server
+				zoneServer.startFspServer(room, playerTeamData)
+
+				zoneServer.timerIsRun = false
+				return
+			}
+			count--
+		case <-zoneServer.timerStop:
+			// invoke client's update
+			zoneServer.context.Net.InvokeBroadCast(listSession, "NotifyRoomUpdate", room.Data)
+			zoneServer.timerIsRun = false
+			return
+		}
+	}
+}
+
+func (zoneServer *ZoneServer) startFspServer(room *Room, playerTeamData *DataFormat.PlayerTeamData) {
+	if room != nil {
+		if room.CanStartGame() {
+			// Create RPC Args
+			creategame := new(DataFormat.CreateGame)
+			creategame.PlayerList = make([]uint32, 0)
+			creategame.RoomID = room.Data.Id
+			creategame.AuthID = -2
+			for _, v := range room.Data.Players {
+				creategame.PlayerList = append(creategame.PlayerList, v.Uid)
+			}
+
+			// New a RPC Reply
+			reply := new(DataFormat.Reply)
+			ok := zoneServer.context.Ipc.CallRpc(creategame, reply, 4051, "GameManager.RPCStartGame")
+			if ok == true {
+				param := new(DataFormat.PVPStartParam)
+
+				// var a interface{} = reply.Fspparam
+				// param.Fspparam = (*DataFormat.FSPParam)(unsafe.Pointer(reply.Fspparam))
+				// param.GameParam = room.GetGameParam()
+				param.Players = room.Data.GetPlayers()
+				for _, v := range param.Players {
+					session := room.GetSeesion(v.GetUid())
+					// param.Fspparam.Sid = reply.P2S[v.GetUid()]
+					reply.Fspparam.Sid = reply.P2S[v.GetUid()]
+					zoneServer.context.Net.Invoke(session, "NotifyGameStart", playerTeamData, v.GetUid(), reply.Fspparam)
+				}
+			} else {
+				zoneServer.Logger.Error("RPC call RPCStartGame failed")
+			}
+		} else {
+			zoneServer.context.Net.ReturnError("player unready", room.Data.Id)
 		}
 	}
 }

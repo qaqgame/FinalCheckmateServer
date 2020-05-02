@@ -1,6 +1,7 @@
 syntax = "proto3";
 package DataFormat;
 option go_package = ".;DataFormat";
+// import "code.holdonbush.top/ServerFramework/fsplist/FSPDatas.proto";
 
 message LoginMsg {
     uint32 uid = 1;
@@ -24,13 +25,13 @@ message UserData {
 }
 
 message HeartBeatReq {
-    int32 ping = 1;
-    int32 timestamp = 2;
+    uint32 ping = 1;
+    uint32 timestamp = 2;
 }
 
 message HeartBeatRsp {
     ReturnCode ret = 1;
-    int32 timestamp = 2;
+    uint32 timestamp = 2;
 }
 
 // CharacData : characters' data in game
@@ -76,6 +77,10 @@ message RoomData {
     int32 maxplayercount = 6;
     // teams - num of each team
     repeated int32 team = 7;
+    // ready - if ready
+    bool ready = 8;
+    // time
+    int32 time = 9;
 }
 
 // RoomListData : room list
@@ -148,4 +153,18 @@ message FSPParam {
     // jitterBufferSize - buffer size
     int32 jitterBufferSize = 12;
     bool enableAutoBuffer = 13;
+}
+
+// 友军标识数据
+// MaskData
+message MaskData {
+    uint32 pid = 1;         // 分配的游戏内id
+    uint32 friendMask = 2;  // 友军标识
+    uint32 enemyMask = 3;   // 敌军标识
+}
+
+// 游戏开始时的下行数据
+// PlayerTeamData 
+message PlayerTeamData {
+    repeated MaskData masks = 1;
 }

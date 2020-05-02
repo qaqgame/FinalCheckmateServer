@@ -25,7 +25,7 @@ func NewOnlineManager(context *ServerContext) *OnlineManager {
 	onlineManager.netmanager.SetAuthCmd(DataFormat.LoginReq)
 	onlineManager.netmanager.AddListener(DataFormat.LoginReq, onlineManager.OnLoginRequest, new(DataFormat.LoginMsg))
 	onlineManager.netmanager.AddListener(DataFormat.HeartBeatRequset, onlineManager.OnHeartBeatRequest, new(DataFormat.HeartBeatReq))
-	onlineManager.netmanager.RegisterRPCMethod(onlineManager,reflect.ValueOf(onlineManager) ,"Logout")
+	onlineManager.netmanager.RegisterRPCMethod(onlineManager, reflect.ValueOf(onlineManager), "Logout")
 
 	onlineManager.mapUserData = make(map[uint32]*DataFormat.ComData)
 	onlineManager.logger = log.WithFields(log.Fields{"Server": "ZoneServer OnlineManager"})
@@ -113,6 +113,7 @@ func (onlineManager *OnlineManager) OnHeartBeatRequest(session Server.ISession, 
 		heartres := new(DataFormat.HeartBeatRsp)
 		heartres.Ret = &DataFormat.SuccessReturn
 		heartres.Timestamp = heartbeatreq.Timestamp
+		onlineManager.logger.Debug("heartbeat: ", heartres)
 		onlineManager.netmanager.Send(session, index, DataFormat.HeartBeatRsponse, heartres)
 	} else {
 		onlineManager.logger.Info("找不到session 对应的 UserData, session :", session)
