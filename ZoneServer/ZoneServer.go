@@ -330,9 +330,15 @@ func (zoneServer *ZoneServer) Timer(listSession []Server.ISession, room *Room) {
 				maskData.EnemyMask = 0x00ff
 				maskData.FriendMask = 0xff00
 
+				maskData2 := new(DataFormat.MaskData)
+				maskData2.Pid = 0
+				maskData2.EnemyMask = 0x00ff
+				maskData2.FriendMask = 0xff00
+
 				playerTeamData := new(DataFormat.PlayerTeamData)
 				playerTeamData.Masks = make([]*DataFormat.MaskData, 0)
 				playerTeamData.Masks = append(playerTeamData.Masks, maskData)
+				playerTeamData.Masks = append(playerTeamData.Masks, maskData2)
 
 				// for _, v := range listSession {
 				// 	zoneServer.context.Net.Invoke(v, "NotifyGameStart", playerTeamData, v.GetUid())
@@ -380,7 +386,7 @@ func (zoneServer *ZoneServer) startFspServer(room *Room, playerTeamData *DataFor
 					session := room.GetSeesion(v.GetUid())
 					// param.Fspparam.Sid = reply.P2S[v.GetUid()]
 					reply.Fspparam.Sid = reply.P2S[v.GetUid()]
-					zoneServer.context.Net.Invoke(session, "NotifyGameStart", playerTeamData, v.GetUid(), reply.Fspparam)
+					zoneServer.context.Net.Invoke(session, "NotifyGameStart", playerTeamData, v.GetId(), reply.Fspparam)
 				}
 			} else {
 				zoneServer.Logger.Error("RPC call RPCStartGame failed")

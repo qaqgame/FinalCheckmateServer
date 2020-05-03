@@ -9,16 +9,12 @@ import (
 // GameManager :
 type GameManager struct {
 	context           *ServerContext
-
 }
 
 // NewGameManager :
 func NewGameManager(_context *ServerContext) *GameManager {
 	gamemanager := new(GameManager)
-
 	gamemanager.context = _context
-
-
 
 	gamemanager.context.Ipc.RegisterRPC(gamemanager)
 	return gamemanager
