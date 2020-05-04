@@ -79,7 +79,7 @@ func (room *Room) AddPlayer(userID uint32, userName string, session Server.ISess
 	}
 	sort.Sort(room)
 	for i := 0; i < len(room.Data.GetPlayers()); i++ {
-		room.Data.Players[i].Id = uint32(i + 1)
+		room.Data.Players[i].Id = uint32(i)
 	}
 
 	// playerData = room.GetPlayerDataByUserID(userID)

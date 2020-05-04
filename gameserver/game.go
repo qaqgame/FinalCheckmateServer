@@ -6,9 +6,10 @@ type MyGameInstance struct {
 	*fsplite.FSPGame
 }
 
-func NewMyGameInstance(gameid uint32, param *fsplite.FSPParam) *MyGameInstance {
+func NewMyGameInstance(_port int,gameid uint32) *MyGameInstance {
 	myGameInstance := new(MyGameInstance)
-	myGameInstance.FSPGame = fsplite.NewFSPGame(gameid, param)
+	defaultparam := fsplite.NewDefaultFspParam("120.79.240.163", _port)
+	myGameInstance.FSPGame = fsplite.NewFSPGame(gameid, defaultparam)
 
 	return myGameInstance
 }

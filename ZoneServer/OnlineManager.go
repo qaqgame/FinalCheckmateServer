@@ -103,9 +103,9 @@ func activeUser(session Server.ISession, userdata *DataFormat.ComData) {
 
 // OnHeartBeatRequest :
 func (onlineManager *OnlineManager) OnHeartBeatRequest(session Server.ISession, index uint32, tmsg proto.Message) {
-	onlineManager.logger.Info("invoke into OnHeartBeatRequest")
+	onlineManager.logger.Warn("invoke into OnHeartBeatRequest", session.GetUid())
 	heartbeatreq := tmsg.(*DataFormat.HeartBeatReq)
-	onlineManager.logger.Info("HeartBeatReq info: ", heartbeatreq, " ", time.Now().UnixNano()/int64(time.Millisecond))
+	onlineManager.logger.Warn("HeartBeatReq info: ", heartbeatreq, " ", time.Now().UnixNano()/int64(time.Millisecond))
 	ud := onlineManager.GetUserDataByID(session.GetUid())
 	if ud != nil {
 		ud.Serveruserdata.LastHeartBeatTime = time.Now().UnixNano() / int64(time.Millisecond)

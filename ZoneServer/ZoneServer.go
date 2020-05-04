@@ -321,6 +321,10 @@ func (zoneServer *ZoneServer) Timer(listSession []Server.ISession, room *Room) {
 		select {
 		case <-tick.C:
 			room.Data.Time = count
+			zoneServer.Logger.Warn("Session len： ",len(listSession))
+			for _,v := range listSession {
+				zoneServer.Logger.Warn("session info: ", v.GetId(), v.GetUid(), v.IsActive())
+			}
 			// invoke client's update
 			zoneServer.context.Net.InvokeBroadCast(listSession, "NotifyRoomUpdate", room.Data)
 			if count == 0 {
@@ -382,11 +386,17 @@ func (zoneServer *ZoneServer) startFspServer(room *Room, playerTeamData *DataFor
 				// param.Fspparam = (*DataFormat.FSPParam)(unsafe.Pointer(reply.Fspparam))
 				// param.GameParam = room.GetGameParam()
 				param.Players = room.Data.GetPlayers()
+				// todo: 玩家id分配位置
+				var idingame uint32 = 0
 				for _, v := range param.Players {
 					session := room.GetSeesion(v.GetUid())
 					// param.Fspparam.Sid = reply.P2S[v.GetUid()]
 					reply.Fspparam.Sid = reply.P2S[v.GetUid()]
-					zoneServer.context.Net.Invoke(session, "NotifyGameStart", playerTeamData, v.GetId(), reply.Fspparam)
+					// v.Id = idingame
+					// zoneServer.Logger.Warn("NotifyGameStart target: ", v.Name, session.GetRemoteEndPoint())
+					zoneServer.Logger.Warn("NotifyGameStart: player id in game: ", v.Id, "session: ", session.GetUid())
+					zoneServer.context.Net.Invoke(session, "NotifyGameStart", playerTeamData, v.Id, reply.Fspparam)
+					idingame++
 				}
 			} else {
 				zoneServer.Logger.Error("RPC call RPCStartGame failed")

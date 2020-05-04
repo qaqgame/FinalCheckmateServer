@@ -23,7 +23,7 @@ func NewGameServer(id, port int, name ...string) *GameServer {
 	gameserver.context.Fsp = fsplite.NewFSPManager(port)
 	gameserver.context.Ipc = IPCWork.NewIPCManager(id)
 
-	gameserver.gamemanager = NewGameManager(gameserver.context)
+	gameserver.gamemanager = NewGameManager(port,gameserver.context)
 
 	gameserver.logger = logrus.WithFields(logrus.Fields{"Server": "GameServer"})
 

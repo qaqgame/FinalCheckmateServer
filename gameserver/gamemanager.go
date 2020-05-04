@@ -9,12 +9,15 @@ import (
 // GameManager :
 type GameManager struct {
 	context           *ServerContext
+	port              int
 }
 
 // NewGameManager :
-func NewGameManager(_context *ServerContext) *GameManager {
+func NewGameManager(_port int,_context *ServerContext) *GameManager {
 	gamemanager := new(GameManager)
+
 	gamemanager.context = _context
+	gamemanager.port = _port
 
 	gamemanager.context.Ipc.RegisterRPC(gamemanager)
 	return gamemanager
@@ -31,8 +34,10 @@ func (gamemanager *GameManager) Clean() {
 
 // RPCStartGame :
 func (gamemanager *GameManager) RPCStartGame(args *DataFormat.CreateGame, reply *DataFormat.Reply) error {
-	gamemanager.context.Fsp.CreateGame(args.RoomID)
-	
+	// gamemanager.context.Fsp.CreateGameI(args.RoomID)
+	myGameInstance := NewMyGameInstance(gamemanager.port,args.RoomID)
+	gamemanager.context.Fsp.AddUDefinedGame(myGameInstance)
+
 	reply.P2S = gamemanager.context.Fsp.AddPlayers(args.RoomID,args.PlayerList)
 	reply.Fspparam = gamemanager.context.Fsp.GetParam()
 
