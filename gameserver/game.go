@@ -2,7 +2,6 @@ package gameserver
 
 import (
 	"code.holdonbush.top/ServerFramework/fsplite"
-	"fmt"
 )
 
 type MyGameInstance struct {
@@ -18,16 +17,6 @@ func NewMyGameInstance(_port int,gameid uint32) *MyGameInstance {
 	myGameInstance.APQueue = fsplite.NewQueue()
 
 	return myGameInstance
-}
-
-func (mygame *MyGameInstance) OnStateGameCreate()  {
-
-}
-
-func (mygame *MyGameInstance) OnStateGameBegin() {
-	fmt.Println("Use user defined func")
-	panic("test fault")
-	return
 }
 
 func (mygame *MyGameInstance) OnRoundBeginCallBack()  {

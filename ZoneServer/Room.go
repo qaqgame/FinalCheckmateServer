@@ -152,6 +152,9 @@ func (room *Room) CanStartGame() bool {
 // IsAllReady :
 func (room *Room) IsAllReady() bool {
 	isAllready := true
+	if room.Data.Players == nil || len(room.Data.Players) == 0 {
+		return false
+	}
 	for _, v := range room.Data.Players {
 		if !v.IsReady {
 			isAllready = false

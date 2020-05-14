@@ -22,7 +22,7 @@ type ZoneServer struct {
 	context       *ServerContext
 	onlineManager *OnlineManager
 	roomManager   *RoomManager
-	rpcalls       *rpc.Call
+	rpcalls       chan *rpc.Call
 	timerStop     chan int
 	timerIsRun    bool
 	rpcMoniter    bool
@@ -55,7 +55,7 @@ func NewZoneServer(id, port int, name ...string) *ZoneServer {
 
 	zoneServer.onlineManager = tonlineManager
 	zoneServer.roomManager = NewRoomManager(zoneServer.context)
-	zoneServer.rpcalls = nil
+	zoneServer.rpcalls = make(chan *rpc.Call,1)
 	zoneServer.timerStop = make(chan int, 5)
 	zoneServer.timerIsRun = false
 	zoneServer.rpcMoniter = false
@@ -259,18 +259,20 @@ func (zoneServer *ZoneServer) UpdateRoomInfo(session Server.ISession, roomID uin
 }
 
 // OnFinishRPCCall : asynchronous rpc call
-func (zoneServer *ZoneServer) OnFinishRPCCall(room *Room, playerTeamData *DataFormat.PlayerTeamData) {
+func (zoneServer *ZoneServer) OnFinishRPCCall(room *Room, playerTeamData *DataFormat.PlayerTeamData,replycall *rpc.Call) {
 	zoneServer.rpcMoniter = true
 	for true {
-		if zoneServer.rpcalls == nil {
-			continue
-		}
+		//if zoneServer.rpcalls == nil {
+		//	continue
+		//}
 		select {
-		case replyCall := <-zoneServer.rpcalls.Done:
-			reply := replyCall.Reply.(*DataFormat.Reply)
+		case replyCall := <- replycall.Done:
+			fmt.Println("finish rpc")
+			reply,_ := replyCall.Reply.(*DataFormat.Reply)
 			// - we use synchronous rpc call in this server.
 			for _, v := range room.Data.Players {
 				session := room.GetSession(v.GetUid())
+				fmt.Println("v: ",reply.P2S)
 				reply.Fspparam.Sid = reply.P2S[v.GetUid()]
 				zoneServer.Logger.Warn("NotifyGameStart: player id in game: ", v.Id, "session: ", session.GetUid())
 				zoneServer.context.Net.Invoke(session, "NotifyGameStart", playerTeamData, v.Id, reply.Fspparam)
@@ -347,22 +349,22 @@ func (zoneServer *ZoneServer) startFspServer(room *Room, playerTeamData *DataFor
 			reply := new(DataFormat.Reply)
 
 			// start a synchronous rpc call
-			// ok := zoneServer.context.Ipc.CallRpc(creategame, reply, 4051, "GameManager.RPCStartGame")
-			zoneServer.rpcalls = zoneServer.context.Ipc.CallRpcAsync(creategame, reply, zoneServer.MInfo.Port, "GameManager.RPCStartGame")
+			ok := zoneServer.context.Ipc.CallRpc(creategame, reply, 4051, "GameManager.RPCStartGame")
+			//replycall := zoneServer.context.Ipc.CallRpcAsync(creategame, reply, 4051, "GameManager.RPCStartGame")
 
-			if !zoneServer.rpcMoniter {
-				go zoneServer.OnFinishRPCCall(room, playerTeamData)
-			}
-			//if ok == true {
-			//	for _, v := range room.Data.Players {
-			//		session := room.GetSession(v.GetUid())
-			//		reply.Fspparam.Sid = reply.P2S[v.GetUid()]
-			//		zoneServer.Logger.Warn("NotifyGameStart: player id in game: ", v.Id, "session: ", session.GetUid())
-			//		zoneServer.context.Net.Invoke(session, "NotifyGameStart", playerTeamData, v.Id, reply.Fspparam)
-			//	}
-			//} else {
-			//	zoneServer.Logger.Error("RPC call RPCStartGame failed")
+			//if !zoneServer.rpcMoniter {
+			//	go zoneServer.OnFinishRPCCall(room, playerTeamData,replycall)
 			//}
+			if ok == true {
+				for _, v := range room.Data.Players {
+					session := room.GetSession(v.GetUid())
+					reply.Fspparam.Sid = reply.P2S[v.GetUid()]
+					zoneServer.Logger.Warn("NotifyGameStart: player id in game: ", v.Id, "session: ", session.GetUid())
+					zoneServer.context.Net.Invoke(session, "NotifyGameStart", playerTeamData, v.Id, reply.Fspparam)
+				}
+			} else {
+				zoneServer.Logger.Error("RPC call RPCStartGame failed")
+			}
 		} else {
 			zoneServer.context.Net.ReturnError("player unready", room.Data.Id)
 		}

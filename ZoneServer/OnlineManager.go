@@ -54,7 +54,7 @@ func (onlineManager *OnlineManager) OnLoginRequest(session Server.ISession, inde
 	success := false
 	loginmsg := tmsg.(*DataFormat.LoginMsg)
 
-	onlineManager.logger.Info("Func OnLoginResquest, loginmsg: ", loginmsg)
+	onlineManager.logger.Info("Func OnLoginResquest, loginmsg: ", loginmsg, "loginmsg name:",loginmsg.Name)
 	onlineManager.logger.Info("login message id: ", loginmsg.Uid)
 	// Get a DataFormat.ComData type info
 	ud := onlineManager.GetUserDataByName(loginmsg.Name)
@@ -131,6 +131,8 @@ func (onlineManager *OnlineManager) Logout(session Server.ISession) {
 // CreateUserData : create ComData type info
 func (onlineManager *OnlineManager) CreateUserData(id uint32, name string) *DataFormat.ComData {
 	comdata := new(DataFormat.ComData)
+	comdata.Userdata = new(DataFormat.UserData)
+	comdata.Serveruserdata = new(DataFormat.ServerUserData)
 	comdata.Userdata.Name = name
 	comdata.Userdata.Id = id
 	onlineManager.mapUserData[id] = comdata

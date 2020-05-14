@@ -2,6 +2,7 @@ package gameserver
 
 import (
 	"errors"
+	"fmt"
 
 	"code.holdonbush.top/FinalCheckmateServer/DataFormat"
 )
@@ -37,6 +38,8 @@ func (gamemanager *GameManager) RPCStartGame(args *DataFormat.CreateGame, reply 
 	// gamemanager.context.Fsp.CreateGameI(args.RoomID)
 	myGameInstance := NewMyGameInstance(gamemanager.port,args.RoomID)
 	gamemanager.context.Fsp.AddUDefinedGame(myGameInstance)
+
+	fmt.Println("playerlist: ", args.PlayerList)
 
 	reply.P2S = gamemanager.context.Fsp.AddPlayers(args.RoomID,args.PlayerList)
 	reply.Fspparam = gamemanager.context.Fsp.GetParam()
