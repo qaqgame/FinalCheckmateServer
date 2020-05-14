@@ -136,8 +136,8 @@ func (room *Room) GetSessionList() []Server.ISession {
 	return list
 }
 
-// GetSeesion :
-func (room *Room) GetSeesion(userID uint32) Server.ISession {
+// GetSession :
+func (room *Room) GetSession(userID uint32) Server.ISession {
 	return room.mapUserID2Session[userID]
 }
 

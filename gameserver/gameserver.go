@@ -3,6 +3,7 @@ package gameserver
 import (
 	"code.holdonbush.top/ServerFramework/IPCWork"
 	"code.holdonbush.top/ServerFramework/ServerManager"
+	"code.holdonbush.top/ServerFramework/common"
 	"code.holdonbush.top/ServerFramework/fsplite"
 	"github.com/sirupsen/logrus"
 )
@@ -20,23 +21,25 @@ func NewGameServer(id, port int, name ...string) *GameServer {
 	gameserver := new(GameServer)
 	gameserver.context = new(ServerContext)
 
-	gameserver.context.Fsp = fsplite.NewFSPManager(port)
-	gameserver.context.Ipc = IPCWork.NewIPCManager(id)
-
-	gameserver.gamemanager = NewGameManager(port,gameserver.context)
-
-	gameserver.logger = logrus.WithFields(logrus.Fields{"Server": "GameServer"})
-
 	tname := "GameServer"
 	if len(name) >= 1 {
 		tname = name[0]
 	}
 
-	Info := new(ServerManager.ServerModuleInfo)
+	Info := new(common.ServerModuleInfo)
 	Info.Id = id
 	Info.Port = port
 	Info.Name = tname
 	c := make(chan int, 2)
+
+	gameserver.context.Fsp = fsplite.NewFSPManager(port)
+	gameserver.context.Ipc = IPCWork.NewIPCManager(Info)
+
+	gameserver.gamemanager = NewGameManager(port,gameserver.context)
+
+	gameserver.logger = logrus.WithFields(logrus.Fields{"Server": "GameServer"})
+
+
 	gameserver.ServerModule = ServerManager.NewServerModule(Info, gameserver.logger, ServerManager.UnCreated, c, gameserver.context.Ipc)
 
 	// gameserver.context.Ipc.RegisterRPC(gameserver)

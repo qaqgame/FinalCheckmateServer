@@ -83,7 +83,7 @@ func (onlineManager *OnlineManager) OnLoginRequest(session Server.ISession, inde
 	if success {
 		response := new(DataFormat.LoginRsp)
 		response.Ret = &DataFormat.SuccessReturn
-		response.Userdata = &ud.Userdata
+		response.Userdata = ud.Userdata
 		onlineManager.logger.Debug("return message: ", response)
 		onlineManager.netmanager.Send(session, index, DataFormat.LoginRes, response)
 	} else {
@@ -109,7 +109,7 @@ func (onlineManager *OnlineManager) OnHeartBeatRequest(session Server.ISession, 
 	ud := onlineManager.GetUserDataByID(session.GetUid())
 	if ud != nil {
 		ud.Serveruserdata.LastHeartBeatTime = time.Now().UnixNano() / int64(time.Millisecond)
-		session.SetPing(uint32(heartbeatreq.Ping))
+		session.SetPing(heartbeatreq.Ping)
 		heartres := new(DataFormat.HeartBeatRsp)
 		heartres.Ret = &DataFormat.SuccessReturn
 		heartres.Timestamp = heartbeatreq.Timestamp

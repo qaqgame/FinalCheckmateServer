@@ -26,8 +26,8 @@ var (
 
 // ComData : data communications between client and server
 type ComData struct {
-	Userdata       UserData
-	Serveruserdata ServerUserData
+	Userdata       *UserData
+	Serveruserdata *ServerUserData
 	OnlineTimeout  int64
 }
 
