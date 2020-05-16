@@ -168,3 +168,8 @@ message MaskData {
 message PlayerTeamData {
     repeated MaskData masks = 1;
 }
+
+//
+message APPoint {
+    int32 AP = 1;
+}

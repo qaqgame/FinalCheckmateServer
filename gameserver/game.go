@@ -1,10 +1,10 @@
 package gameserver
 
 import (
-	"bytes"
 	"code.holdonbush.top/FinalCheckmateServer/DataFormat"
 	"code.holdonbush.top/ServerFramework/fsplite"
 	"encoding/binary"
+	"github.com/golang/protobuf/proto"
 	"github.com/sirupsen/logrus"
 	"sort"
 )
@@ -32,12 +32,13 @@ func NewMyGameInstance(_port int,gameid uint32) *MyGameInstance {
 	// set UpperController ---------- FSPGameI
 	myGameInstance.FSPGame.UpperController = myGameInstance
 
+	logrus.Info("port: ",_port,"Upper: ",myGameInstance.FSPGame.UpperController)
 	return myGameInstance
 }
 
 func (mygame *MyGameInstance) OnGameBeginCallBack(player *fsplite.FSPPlayer, message *fsplite.FSPMessage) {
 	v := new(PlayerAP)
-	v.playerId = player.ID
+	v.playerId = player.IdInGame
 	v.playerAP = DataFormat.DefaultAP
 
 	if !mygame.Received[v.playerId] {
@@ -54,17 +55,19 @@ func (mygame *MyGameInstance) OnGameBeginMsgAddCallBack() {
 
 func (mygame *MyGameInstance) CreateRoundMsg() (b []byte)  {
 	newBoolRound := len(mygame.GetPlayerMap()) == mygame.ExeQueue.Len()
+	b = make([]byte,4)
 	binary.BigEndian.PutUint32(b, uint32(0))
 	if newBoolRound {
 		binary.BigEndian.PutUint32(b, uint32(1))
 	}
-
 	return
 }
 
 func (mygame *MyGameInstance) CreateControlStartMsg() (b []byte) {
-	playerUId := mygame.ExeQueue.Pop().(*PlayerAP).playerId
-	binary.BigEndian.PutUint32(b, playerUId)
+	b = make([]byte,4)
+	playerIdInGame := mygame.ExeQueue.Pop().(*PlayerAP).playerId
+	logrus.Info("ControlStartPID: ",playerIdInGame)
+	binary.BigEndian.PutUint32(b, playerIdInGame)
 	return
 }
 
@@ -75,12 +78,14 @@ func (mygame *MyGameInstance) OnRoundEndCallBack(player *fsplite.FSPPlayer, mess
 	}
 
 	playerap := new(PlayerAP)
-	playerap.playerId = player.ID
+	playerap.playerId = player.IdInGame
 	//todo: 处理content
-	buf := bytes.NewBuffer(message.Content)
-	err := binary.Read(buf, binary.BigEndian, &playerap.playerAP)
+	ap := new(DataFormat.APPoint)
+	err := proto.Unmarshal(message.Content, ap)
+	//buf := bytes.NewBuffer(message.Content)
+	//err := binary.Read(buf, binary.BigEndian, &playerap.playerAP)
 	if err != nil {
-		logrus.Fatal("error while read int")
+		logrus.Fatal("error while Unmarshal Content")
 	}
 	// playerap.playerAP = binary.BigEndian.Uint32(message.Content)
 	if !mygame.Received[playerap.playerId] {

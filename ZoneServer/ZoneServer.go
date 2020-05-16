@@ -302,6 +302,7 @@ func (zoneServer *ZoneServer) Timer(listSession []Server.ISession, room *Room) {
 			if count == 0 {
 				// send msg to client
 				maskData := new(DataFormat.MaskData)
+				// Pid: Id in Game
 				maskData.Pid = 1
 				maskData.EnemyMask = 0x00ff
 				maskData.FriendMask = 0xff00
