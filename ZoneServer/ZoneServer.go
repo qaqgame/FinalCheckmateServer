@@ -62,7 +62,7 @@ func NewZoneServer(id, port int, name ...string) *ZoneServer {
 
 	zoneServer.context.Net.RegisterRPCMethods(zoneServer, reflect.ValueOf(zoneServer), "UpdateRoomList", "CreateRoom", "JoinRoom", "ExitRoom", "RoomReady", "ChangeTeam", "UpdateRoomInfo")
 
-	go zoneServer.ShowDump()
+	// go zoneServer.ShowDump()
 	zoneServer.DefaultCreateRoom()
 
 	return zoneServer
@@ -338,11 +338,11 @@ func (zoneServer *ZoneServer) startFspServer(room *Room, playerTeamData *DataFor
 		if room.CanStartGame() {
 			// Create RPC Args
 			creategame := new(DataFormat.CreateGame)
-			creategame.PlayerList = make([]uint32, 0)
+			creategame.PlayerList = make(map[uint32]uint32)
 			creategame.RoomID = room.Data.Id
 			creategame.AuthID = -2
 			for _, v := range room.Data.Players {
-				creategame.PlayerList = append(creategame.PlayerList, v.Uid)
+				creategame.PlayerList[v.Uid] = v.Id
 			}
 
 			// New a RPC Reply

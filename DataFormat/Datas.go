@@ -15,6 +15,8 @@ const (
 	ZoneServer = 1
 	// GameServer : game server
 	GameServer = 2
+	// DefaultAP
+	DefaultAP = 20
 )
 
 var (

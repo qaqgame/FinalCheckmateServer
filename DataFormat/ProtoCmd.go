@@ -27,5 +27,5 @@ type Reply struct {
 type CreateGame struct {
 	RoomID     uint32
 	AuthID     int32
-	PlayerList []uint32
+	PlayerList map[uint32]uint32      //key: playerId   value: id in game
 }
