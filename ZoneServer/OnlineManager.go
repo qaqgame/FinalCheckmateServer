@@ -105,7 +105,7 @@ func activeUser(session Server.ISession, userdata *DataFormat.ComData) {
 func (onlineManager *OnlineManager) OnHeartBeatRequest(session Server.ISession, index uint32, tmsg proto.Message) {
 	onlineManager.logger.Warn("invoke into OnHeartBeatRequest", session.GetUid())
 	heartbeatreq := tmsg.(*DataFormat.HeartBeatReq)
-	onlineManager.logger.Warn("HeartBeatReq info: ", heartbeatreq, " ", time.Now().UnixNano()/int64(time.Millisecond))
+	onlineManager.logger.Warn("HeartBeatReq info: ", heartbeatreq)
 	ud := onlineManager.GetUserDataByID(session.GetUid())
 	if ud != nil {
 		ud.Serveruserdata.LastHeartBeatTime = time.Now().UnixNano() / int64(time.Millisecond)
@@ -114,7 +114,7 @@ func (onlineManager *OnlineManager) OnHeartBeatRequest(session Server.ISession, 
 		heartres.Ret = &DataFormat.SuccessReturn
 		heartres.Timestamp = heartbeatreq.Timestamp
 		onlineManager.logger.Debug("heartbeat: ", heartres)
-		onlineManager.netmanager.Send(session, index, DataFormat.HeartBeatRsponse, heartres)
+		go onlineManager.netmanager.Send(session, index, DataFormat.HeartBeatRsponse, heartres)
 	} else {
 		onlineManager.logger.Info("找不到session 对应的 UserData, session :", session)
 	}

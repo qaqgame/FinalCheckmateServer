@@ -82,6 +82,7 @@ func (mygame *MyGameInstance) OnRoundEndCallBack(player *fsplite.FSPPlayer, mess
 	//todo: 处理content
 	ap := new(DataFormat.APPoint)
 	err := proto.Unmarshal(message.Content, ap)
+	playerap.playerAP = ap.AP
 	//buf := bytes.NewBuffer(message.Content)
 	//err := binary.Read(buf, binary.BigEndian, &playerap.playerAP)
 	if err != nil {

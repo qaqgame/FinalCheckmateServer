@@ -300,23 +300,39 @@ func (zoneServer *ZoneServer) Timer(listSession []Server.ISession, room *Room) {
 			// invoke client's update
 			zoneServer.context.Net.InvokeBroadCast(listSession, "NotifyRoomUpdate", room.Data)
 			if count == 0 {
-				// send msg to client
-				maskData := new(DataFormat.MaskData)
-				// Pid: Id in Game
-				maskData.Pid = 1
-				maskData.EnemyMask = 0x00ff
-				maskData.FriendMask = 0xff00
-
-				maskData2 := new(DataFormat.MaskData)
-				maskData2.Pid = 0
-				maskData2.EnemyMask = 0x00ff
-				maskData2.FriendMask = 0xff00
-
 				playerTeamData := new(DataFormat.PlayerTeamData)
 				playerTeamData.Masks = make([]*DataFormat.MaskData, 0)
-				playerTeamData.Masks = append(playerTeamData.Masks, maskData)
-				playerTeamData.Masks = append(playerTeamData.Masks, maskData2)
 
+				for _,v := range room.Data.Players {
+					maskData := new(DataFormat.MaskData)
+					maskData.Pid = v.Id
+					maskData.EnemyMask = ^(0x01 << v.Id)
+					maskData.FriendMask = 0x01 << v.Id
+
+					playerTeamData.Masks = append(playerTeamData.Masks, maskData)
+				}
+
+				//// send msg to client
+				//maskData := new(DataFormat.MaskData)
+				//// Pid: Id in Game
+				//maskData.Pid = 1
+				//maskData.EnemyMask = 0xff00
+				//maskData.FriendMask = 0x00ff
+				//
+				//maskData2 := new(DataFormat.MaskData)
+				//maskData2.Pid = 0
+				//maskData2.EnemyMask = 0xff00
+				//maskData2.FriendMask = 0x00ff
+				//
+				//maskData3 := new(DataFormat.MaskData)
+				//maskData3.Pid = 2
+				//maskData3.EnemyMask = 0xff00
+				//maskData3.FriendMask = 0x00ff
+				//
+				//
+				//playerTeamData.Masks = append(playerTeamData.Masks, maskData)
+				//playerTeamData.Masks = append(playerTeamData.Masks, maskData2)
+				//playerTeamData.Masks = append(playerTeamData.Masks, maskData3)
 
 				// start fsp server
 				zoneServer.startFspServer(room, playerTeamData)
