@@ -1316,6 +1316,198 @@ func (x *APPoint) GetAP() int32 {
 	return 0
 }
 
+//
+type IntCntMsg struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Value int32 `protobuf:"varint,1,opt,name=Value,proto3" json:"Value,omitempty"`
+}
+
+func (x *IntCntMsg) Reset() {
+	*x = IntCntMsg{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_Data_proto_msgTypes[18]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *IntCntMsg) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IntCntMsg) ProtoMessage() {}
+
+func (x *IntCntMsg) ProtoReflect() protoreflect.Message {
+	mi := &file_Data_proto_msgTypes[18]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IntCntMsg.ProtoReflect.Descriptor instead.
+func (*IntCntMsg) Descriptor() ([]byte, []int) {
+	return file_Data_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *IntCntMsg) GetValue() int32 {
+	if x != nil {
+		return x.Value
+	}
+	return 0
+}
+
+//
+type BoolCntMsg struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Value bool `protobuf:"varint,1,opt,name=value,proto3" json:"value,omitempty"`
+}
+
+func (x *BoolCntMsg) Reset() {
+	*x = BoolCntMsg{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_Data_proto_msgTypes[19]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *BoolCntMsg) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BoolCntMsg) ProtoMessage() {}
+
+func (x *BoolCntMsg) ProtoReflect() protoreflect.Message {
+	mi := &file_Data_proto_msgTypes[19]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BoolCntMsg.ProtoReflect.Descriptor instead.
+func (*BoolCntMsg) Descriptor() ([]byte, []int) {
+	return file_Data_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *BoolCntMsg) GetValue() bool {
+	if x != nil {
+		return x.Value
+	}
+	return false
+}
+
+//
+type UintCntMsg struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Value uint32 `protobuf:"varint,1,opt,name=Value,proto3" json:"Value,omitempty"`
+}
+
+func (x *UintCntMsg) Reset() {
+	*x = UintCntMsg{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_Data_proto_msgTypes[20]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *UintCntMsg) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UintCntMsg) ProtoMessage() {}
+
+func (x *UintCntMsg) ProtoReflect() protoreflect.Message {
+	mi := &file_Data_proto_msgTypes[20]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UintCntMsg.ProtoReflect.Descriptor instead.
+func (*UintCntMsg) Descriptor() ([]byte, []int) {
+	return file_Data_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *UintCntMsg) GetValue() uint32 {
+	if x != nil {
+		return x.Value
+	}
+	return 0
+}
+
+//
+type UintListCntMsg struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Values []uint32 `protobuf:"varint,1,rep,packed,name=Values,proto3" json:"Values,omitempty"`
+}
+
+func (x *UintListCntMsg) Reset() {
+	*x = UintListCntMsg{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_Data_proto_msgTypes[21]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *UintListCntMsg) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UintListCntMsg) ProtoMessage() {}
+
+func (x *UintListCntMsg) ProtoReflect() protoreflect.Message {
+	mi := &file_Data_proto_msgTypes[21]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UintListCntMsg.ProtoReflect.Descriptor instead.
+func (*UintListCntMsg) Descriptor() ([]byte, []int) {
+	return file_Data_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *UintListCntMsg) GetValues() []uint32 {
+	if x != nil {
+		return x.Values
+	}
+	return nil
+}
+
 var File_Data_proto protoreflect.FileDescriptor
 
 var file_Data_proto_rawDesc = []byte{
@@ -1451,13 +1643,23 @@ var file_Data_proto_rawDesc = []byte{
 	0x14, 0x2e, 0x44, 0x61, 0x74, 0x61, 0x46, 0x6f, 0x72, 0x6d, 0x61, 0x74, 0x2e, 0x4d, 0x61, 0x73,
 	0x6b, 0x44, 0x61, 0x74, 0x61, 0x52, 0x05, 0x6d, 0x61, 0x73, 0x6b, 0x73, 0x22, 0x19, 0x0a, 0x07,
 	0x41, 0x50, 0x50, 0x6f, 0x69, 0x6e, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x41, 0x50, 0x18, 0x01, 0x20,
-	0x01, 0x28, 0x05, 0x52, 0x02, 0x41, 0x50, 0x2a, 0x4f, 0x0a, 0x09, 0x47, 0x61, 0x6d, 0x65, 0x4d,
-	0x6f, 0x64, 0x65, 0x73, 0x12, 0x0e, 0x0a, 0x0a, 0x45, 0x6e, 0x64, 0x4c, 0x65, 0x73, 0x73, 0x50,
-	0x76, 0x45, 0x10, 0x00, 0x12, 0x10, 0x0a, 0x0c, 0x54, 0x69, 0x6d, 0x65, 0x4c, 0x69, 0x6d, 0x69,
-	0x74, 0x50, 0x76, 0x45, 0x10, 0x01, 0x12, 0x0e, 0x0a, 0x0a, 0x45, 0x6e, 0x64, 0x4c, 0x65, 0x73,
-	0x73, 0x50, 0x76, 0x50, 0x10, 0x02, 0x12, 0x10, 0x0a, 0x0c, 0x54, 0x69, 0x6d, 0x65, 0x4c, 0x69,
-	0x6d, 0x69, 0x74, 0x50, 0x76, 0x50, 0x10, 0x03, 0x42, 0x0e, 0x5a, 0x0c, 0x2e, 0x3b, 0x44, 0x61,
-	0x74, 0x61, 0x46, 0x6f, 0x72, 0x6d, 0x61, 0x74, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x01, 0x28, 0x05, 0x52, 0x02, 0x41, 0x50, 0x22, 0x21, 0x0a, 0x09, 0x49, 0x6e, 0x74, 0x43, 0x6e,
+	0x74, 0x4d, 0x73, 0x67, 0x12, 0x14, 0x0a, 0x05, 0x56, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x05, 0x52, 0x05, 0x56, 0x61, 0x6c, 0x75, 0x65, 0x22, 0x22, 0x0a, 0x0a, 0x42, 0x6f,
+	0x6f, 0x6c, 0x43, 0x6e, 0x74, 0x4d, 0x73, 0x67, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75,
+	0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x22, 0x22,
+	0x0a, 0x0a, 0x55, 0x69, 0x6e, 0x74, 0x43, 0x6e, 0x74, 0x4d, 0x73, 0x67, 0x12, 0x14, 0x0a, 0x05,
+	0x56, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x05, 0x56, 0x61, 0x6c,
+	0x75, 0x65, 0x22, 0x28, 0x0a, 0x0e, 0x55, 0x69, 0x6e, 0x74, 0x4c, 0x69, 0x73, 0x74, 0x43, 0x6e,
+	0x74, 0x4d, 0x73, 0x67, 0x12, 0x16, 0x0a, 0x06, 0x56, 0x61, 0x6c, 0x75, 0x65, 0x73, 0x18, 0x01,
+	0x20, 0x03, 0x28, 0x0d, 0x52, 0x06, 0x56, 0x61, 0x6c, 0x75, 0x65, 0x73, 0x2a, 0x4f, 0x0a, 0x09,
+	0x47, 0x61, 0x6d, 0x65, 0x4d, 0x6f, 0x64, 0x65, 0x73, 0x12, 0x0e, 0x0a, 0x0a, 0x45, 0x6e, 0x64,
+	0x4c, 0x65, 0x73, 0x73, 0x50, 0x76, 0x45, 0x10, 0x00, 0x12, 0x10, 0x0a, 0x0c, 0x54, 0x69, 0x6d,
+	0x65, 0x4c, 0x69, 0x6d, 0x69, 0x74, 0x50, 0x76, 0x45, 0x10, 0x01, 0x12, 0x0e, 0x0a, 0x0a, 0x45,
+	0x6e, 0x64, 0x4c, 0x65, 0x73, 0x73, 0x50, 0x76, 0x50, 0x10, 0x02, 0x12, 0x10, 0x0a, 0x0c, 0x54,
+	0x69, 0x6d, 0x65, 0x4c, 0x69, 0x6d, 0x69, 0x74, 0x50, 0x76, 0x50, 0x10, 0x03, 0x42, 0x0e, 0x5a,
+	0x0c, 0x2e, 0x3b, 0x44, 0x61, 0x74, 0x61, 0x46, 0x6f, 0x72, 0x6d, 0x61, 0x74, 0x62, 0x06, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -1473,7 +1675,7 @@ func file_Data_proto_rawDescGZIP() []byte {
 }
 
 var file_Data_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_Data_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
+var file_Data_proto_msgTypes = make([]protoimpl.MessageInfo, 22)
 var file_Data_proto_goTypes = []interface{}{
 	(GameModes)(0),                // 0: DataFormat.GameModes
 	(*LoginMsg)(nil),              // 1: DataFormat.LoginMsg
@@ -1494,6 +1696,10 @@ var file_Data_proto_goTypes = []interface{}{
 	(*MaskData)(nil),              // 16: DataFormat.MaskData
 	(*PlayerTeamData)(nil),        // 17: DataFormat.PlayerTeamData
 	(*APPoint)(nil),               // 18: DataFormat.APPoint
+	(*IntCntMsg)(nil),             // 19: DataFormat.IntCntMsg
+	(*BoolCntMsg)(nil),            // 20: DataFormat.BoolCntMsg
+	(*UintCntMsg)(nil),            // 21: DataFormat.UintCntMsg
+	(*UintListCntMsg)(nil),        // 22: DataFormat.UintListCntMsg
 }
 var file_Data_proto_depIdxs = []int32{
 	3,  // 0: DataFormat.LoginRsp.ret:type_name -> DataFormat.ReturnCode
@@ -1736,6 +1942,54 @@ func file_Data_proto_init() {
 				return nil
 			}
 		}
+		file_Data_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*IntCntMsg); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_Data_proto_msgTypes[19].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*BoolCntMsg); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_Data_proto_msgTypes[20].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*UintCntMsg); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_Data_proto_msgTypes[21].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*UintListCntMsg); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -1743,7 +1997,7 @@ func file_Data_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_Data_proto_rawDesc,
 			NumEnums:      1,
-			NumMessages:   18,
+			NumMessages:   22,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

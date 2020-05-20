@@ -39,9 +39,10 @@ func (gamemanager *GameManager) RPCStartGame(args *DataFormat.CreateGame, reply 
 	myGameInstance := NewMyGameInstance(gamemanager.port,args.RoomID)
 	gamemanager.context.Fsp.AddUDefinedGame(myGameInstance)
 
+	//key: playerId   value: id in game
 	fmt.Println("playerlist: ", args.PlayerList)
 
-	reply.P2S = gamemanager.context.Fsp.AddPlayers(args.RoomID,args.PlayerList)
+	reply.P2S = gamemanager.context.Fsp.AddPlayers(args.RoomID,args.PlayerList, args.MapFriendMask, args.MapEnemyMask)
 	reply.Fspparam = gamemanager.context.Fsp.GetParam()
 
 	if reply.Fspparam == nil {

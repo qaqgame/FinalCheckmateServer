@@ -25,7 +25,9 @@ type Reply struct {
 
 // CreateGame :
 type CreateGame struct {
-	RoomID     uint32
-	AuthID     int32
-	PlayerList map[uint32]uint32      //key: playerId   value: id in game
+	RoomID         uint32
+	AuthID         int32
+	PlayerList     map[uint32]uint32      //key: playerId   value: id in game
+	MapFriendMask  map[uint32]uint32      //key: playerId   value: player's friend mask
+	MapEnemyMask   map[uint32]uint32      //key: playerId   value: player's enemy mask
 }

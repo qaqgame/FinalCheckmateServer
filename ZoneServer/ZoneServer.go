@@ -312,28 +312,6 @@ func (zoneServer *ZoneServer) Timer(listSession []Server.ISession, room *Room) {
 					playerTeamData.Masks = append(playerTeamData.Masks, maskData)
 				}
 
-				//// send msg to client
-				//maskData := new(DataFormat.MaskData)
-				//// Pid: Id in Game
-				//maskData.Pid = 1
-				//maskData.EnemyMask = 0xff00
-				//maskData.FriendMask = 0x00ff
-				//
-				//maskData2 := new(DataFormat.MaskData)
-				//maskData2.Pid = 0
-				//maskData2.EnemyMask = 0xff00
-				//maskData2.FriendMask = 0x00ff
-				//
-				//maskData3 := new(DataFormat.MaskData)
-				//maskData3.Pid = 2
-				//maskData3.EnemyMask = 0xff00
-				//maskData3.FriendMask = 0x00ff
-				//
-				//
-				//playerTeamData.Masks = append(playerTeamData.Masks, maskData)
-				//playerTeamData.Masks = append(playerTeamData.Masks, maskData2)
-				//playerTeamData.Masks = append(playerTeamData.Masks, maskData3)
-
 				// start fsp server
 				zoneServer.startFspServer(room, playerTeamData)
 
@@ -356,10 +334,17 @@ func (zoneServer *ZoneServer) startFspServer(room *Room, playerTeamData *DataFor
 			// Create RPC Args
 			creategame := new(DataFormat.CreateGame)
 			creategame.PlayerList = make(map[uint32]uint32)
+			creategame.MapFriendMask = make(map[uint32]uint32)
+			creategame.MapEnemyMask = make(map[uint32]uint32)
 			creategame.RoomID = room.Data.Id
 			creategame.AuthID = -2
 			for _, v := range room.Data.Players {
 				creategame.PlayerList[v.Uid] = v.Id
+			}
+
+			for _,v := range playerTeamData.Masks {
+				creategame.MapFriendMask[v.Pid] = v.FriendMask
+				creategame.MapEnemyMask[v.Pid] = v.EnemyMask
 			}
 
 			// New a RPC Reply
@@ -367,11 +352,6 @@ func (zoneServer *ZoneServer) startFspServer(room *Room, playerTeamData *DataFor
 
 			// start a synchronous rpc call
 			ok := zoneServer.context.Ipc.CallRpc(creategame, reply, 4051, "GameManager.RPCStartGame")
-			//replycall := zoneServer.context.Ipc.CallRpcAsync(creategame, reply, 4051, "GameManager.RPCStartGame")
-
-			//if !zoneServer.rpcMoniter {
-			//	go zoneServer.OnFinishRPCCall(room, playerTeamData,replycall)
-			//}
 			if ok == true {
 				for _, v := range room.Data.Players {
 					session := room.GetSession(v.GetUid())

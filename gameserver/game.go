@@ -4,6 +4,7 @@ import (
 	"code.holdonbush.top/FinalCheckmateServer/DataFormat"
 	"code.holdonbush.top/ServerFramework/fsplite"
 	"encoding/binary"
+	"fmt"
 	"github.com/golang/protobuf/proto"
 	"github.com/sirupsen/logrus"
 	"sort"
@@ -14,6 +15,7 @@ type MyGameInstance struct {
 	APQueue     *fsplite.Queue
 	ExeQueue    *fsplite.Queue
 	Received    map[uint32]bool
+	WinnerQueue *fsplite.Queue
 }
 
 type PlayerAP struct {
@@ -28,12 +30,21 @@ func NewMyGameInstance(_port int,gameid uint32) *MyGameInstance {
 
 	myGameInstance.APQueue = fsplite.NewQueue()
 	myGameInstance.ExeQueue = fsplite.NewQueue()
+	myGameInstance.WinnerQueue = fsplite.NewQueue()
 	myGameInstance.Received = make(map[uint32]bool)
 	// set UpperController ---------- FSPGameI
 	myGameInstance.FSPGame.UpperController = myGameInstance
 
 	logrus.Info("port: ",_port,"Upper: ",myGameInstance.FSPGame.UpperController)
 	return myGameInstance
+}
+
+func (mygame *MyGameInstance) Release() {
+	mygame.APQueue.Clear()
+	mygame.WinnerQueue.Clear()
+	mygame.ExeQueue.Clear()
+	mygame.Received = nil
+	mygame.FSPGame.Release()
 }
 
 func (mygame *MyGameInstance) OnGameBeginCallBack(player *fsplite.FSPPlayer, message *fsplite.FSPMessage) {
@@ -120,4 +131,70 @@ func (mygame *MyGameInstance) OnRoundEndMsgAddCallBack() {
 	for k, _ := range mygame.Received {
 		mygame.Received[k] = false
 	}
+}
+
+func (mygame *MyGameInstance) OnGameEndCallBack(player *fsplite.FSPPlayer, message *fsplite.FSPMessage)  {
+	v := new(DataFormat.UintCntMsg)
+	err := proto.Unmarshal(message.Content, v)
+	if err != nil {
+		fmt.Println("err: ",err)
+	}
+
+	if !mygame.WinnerQueue.Contain(v.Value) {
+		mygame.WinnerQueue.Push(v.Value)
+	}
+}
+
+func (mygame *MyGameInstance) CreateGameEndMsg() (b []byte) {
+	//winnerList := make([]*fsplite.FSPPlayer,0)
+	//for mygame.WinnerQueue.Len() > 0 {
+	//	IdInGame := mygame.WinnerQueue.Pop().(uint32)
+	//	winnerList = append(winnerList, mygame.GetPlayerWithIdInGame(IdInGame))
+	//}
+
+	//base := winnerList[0].IdInGame
+	//for _, v := range winnerList {
+	//	if ((0x01 << base) & v.FriendMask) >> base != 1 {
+	//		winnerIdList := new(DataFormat.UintListCntMsg)
+	//		winnerIdList.Values = make([]uint32,0)
+	//		res, err := proto.Marshal(winnerIdList)
+	//		if err != nil {
+	//			fmt.Println("error marshal: ",err)
+	//		}
+	//		return res
+	//	}
+	//}
+	base := mygame.WinnerQueue.Pop().(uint32)
+	basePlayer := mygame.GetPlayerWithIdInGame(base)
+	for mygame.WinnerQueue.Len() > 0 {
+		IdInGame := mygame.WinnerQueue.Pop().(uint32)
+		item := mygame.GetPlayerWithIdInGame(IdInGame)
+		if ((0x01<<base)&item.FriendMask)>>base != 1 {
+			winnerIdList := new(DataFormat.UintListCntMsg)
+			winnerIdList.Values = make([]uint32,0)
+			res, err := proto.Marshal(winnerIdList)
+			if err != nil {
+				fmt.Println("error marshal: ",err)
+			}
+			return res
+		}
+	}
+
+	baseFriendMask := basePlayer.FriendMask
+	var tmpId uint32 = 0
+	winnerIdList := new(DataFormat.UintListCntMsg)
+	winnerIdList.Values = make([]uint32,0)
+	for (baseFriendMask & (0x01 << tmpId)) >> tmpId == 1 {
+		winnerIdList.Values = append(winnerIdList.Values, tmpId)
+		tmpId++
+	}
+	b, err := proto.Marshal(winnerIdList)
+	if err != nil {
+		fmt.Println("error marshal: ",err)
+	}
+	return
+}
+
+func (mygame *MyGameInstance) OnGameEndMsgAddCallBack() {
+	// mygame.Release()
 }

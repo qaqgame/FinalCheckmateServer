@@ -173,3 +173,23 @@ message PlayerTeamData {
 message APPoint {
     int32 AP = 1;
 }
+
+//
+message IntCntMsg {
+    int32 Value = 1;
+}
+
+//
+message BoolCntMsg {
+    bool value = 1;
+}
+
+//
+message UintCntMsg {
+    uint32 Value = 1;
+}
+
+//
+message UintListCntMsg {
+    repeated uint32 Values = 1;
+}
