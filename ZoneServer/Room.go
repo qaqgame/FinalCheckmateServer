@@ -180,7 +180,11 @@ func (room *Room) CreateGameParam(config *DataFormat.MapConfig, data *DataFormat
 	param := new(DataFormat.GameParam)
 	param.IdInGame = idInGame
 	param.PlayerTeamData = data
-	param.MapName = room.Data.MapName
+	if room.Data.MapName == "none" {
+		param.MapName = "testMap"
+	} else {
+		param.MapName = room.Data.MapName
+	}
 	for _,v := range config.Roles {
 		name := v.Name
 		newItem := &*DataFormat.RolesMap[name]

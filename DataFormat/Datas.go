@@ -33,8 +33,8 @@ var (
 		Roles:         []*RoleTrack{
 			&RoleTrack{
 				Name:     "Alice",
-				Team:     1,
-				Position: "(3,3,3)",
+				Team:     0,
+				Position: "(3,-6,3)",
 			},
 		},
 	}
