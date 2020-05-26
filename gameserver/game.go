@@ -16,11 +16,18 @@ type MyGameInstance struct {
 	ExeQueue    *fsplite.Queue
 	Received    map[uint32]bool
 	WinnerQueue *fsplite.Queue
+	RPCCallerF   RPCCaller
 }
 
 type PlayerAP struct {
 	playerId     uint32
 	playerAP     int32
+}
+
+type RPCCaller func(args *DataFormat.CreateGame, reply *DataFormat.Reply) error
+
+func (mygame *MyGameInstance) SetRPCCaller(caller RPCCaller) {
+	mygame.RPCCallerF = caller
 }
 
 func NewMyGameInstance(_port int,gameid uint32) *MyGameInstance {
@@ -40,11 +47,18 @@ func NewMyGameInstance(_port int,gameid uint32) *MyGameInstance {
 }
 
 func (mygame *MyGameInstance) Release() {
-	mygame.APQueue.Clear()
-	mygame.WinnerQueue.Clear()
-	mygame.ExeQueue.Clear()
-	mygame.Received = nil
-	mygame.FSPGame.Release()
+	creategame := new(DataFormat.CreateGame)
+	creategame.RoomID = mygame.GetGameID()
+
+	reply := new(DataFormat.Reply)
+	ok := mygame.RPCCallerF(creategame,reply)
+	if ok == nil {
+		mygame.APQueue.Clear()
+		mygame.WinnerQueue.Clear()
+		mygame.ExeQueue.Clear()
+		mygame.Received = nil
+		mygame.FSPGame.Release()
+	}
 }
 
 func (mygame *MyGameInstance) OnGameBeginCallBack(player *fsplite.FSPPlayer, message *fsplite.FSPMessage) {

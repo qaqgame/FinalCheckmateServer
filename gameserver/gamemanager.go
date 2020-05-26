@@ -37,6 +37,7 @@ func (gamemanager *GameManager) Clean() {
 func (gamemanager *GameManager) RPCStartGame(args *DataFormat.CreateGame, reply *DataFormat.Reply) error {
 	// gamemanager.context.Fsp.CreateGameI(args.RoomID)
 	myGameInstance := NewMyGameInstance(gamemanager.port,args.RoomID)
+	myGameInstance.SetRPCCaller(gamemanager.DeleteRoom)
 	gamemanager.context.Fsp.AddUDefinedGame(myGameInstance)
 
 	//key: playerId   value: id in game
@@ -49,4 +50,13 @@ func (gamemanager *GameManager) RPCStartGame(args *DataFormat.CreateGame, reply 
 		return errors.New("StartGame error: not Fspparam")
 	}
 	return nil
+}
+
+func (gamemanager *GameManager) DeleteRoom(args *DataFormat.CreateGame, reply *DataFormat.Reply) error {
+	ok := gamemanager.context.Ipc.CallRpc(args, reply, 4050, "ZoneServer.DeleteRoom")
+	if ok {
+		return nil
+	}
+
+	return errors.New("err")
 }

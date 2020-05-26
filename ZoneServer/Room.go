@@ -3,6 +3,7 @@ package ZoneServer
 import (
 	"code.holdonbush.top/FinalCheckmateServer/Utils"
 	"errors"
+	"fmt"
 	"sort"
 	"strconv"
 
@@ -29,6 +30,7 @@ type Room struct {
 	mapUserID2Session map[uint32]Server.ISession
 	logger            *log.Entry
 	roleItemId        int32
+	mapConfig         *DataFormat.MapConfig
 }
 
 // Dump : show connect infos
@@ -43,22 +45,26 @@ func (room *Room) Dump() {
 }
 
 // CreateRoom : create a room
-func CreateRoom(userID uint32, userName string, session Server.ISession, roomName, modeName, mapName string, teams []int32) *Room {
+func CreateRoom(userID uint32, userName string, session Server.ISession, roomName, mapName string, mapConfig *DataFormat.MapConfig) *Room {
+	if mapConfig == nil {
+		mapConfig = DataFormat.DefaultMapConfig
+	}
 	room := new(Room)
 	room.mapUserID2Session = make(map[uint32]Server.ISession)
 	room.Data = new(DataFormat.RoomData)
 	room.Data.Id = NewRoomID()
 	room.Data.Name = roomName
-	room.Data.Mode = modeName
+	room.Data.Mode = mapConfig.Rule
 	room.Data.MapName = mapName
-	room.Data.Team = teams
-	room.Data.Maxplayercount = 0
-	room.roleItemId = 0
-	for _, v := range teams {
-		room.Data.Maxplayercount += v
+	room.Data.Maxplayercount = mapConfig.MaxTeam
+	room.Data.Team = make([]int32, room.Data.Maxplayercount)
+	var i int32 = 0
+	for i=0; i<room.Data.Maxplayercount; i++ {
+		room.Data.Team[i] = 1
 	}
 	// max player count; team  --- in room.Data
-
+	room.roleItemId = 0
+	room.mapConfig = mapConfig
 	room.logger = log.WithFields(log.Fields{"Server": "Room" + strconv.Itoa(int(room.Data.Id))})
 
 	room.AddPlayer(userID, userName, session)
@@ -176,7 +182,7 @@ func (room *Room) SetReady(userID uint32, value bool) {
 	}
 }
 
-func (room *Room) CreateGameParam(config *DataFormat.MapConfig, data *DataFormat.PlayerTeamData, idInGame uint32) *DataFormat.GameParam {
+func (room *Room) CreateGameParam(data *DataFormat.PlayerTeamData, idInGame uint32) *DataFormat.GameParam {
 	param := new(DataFormat.GameParam)
 	param.IdInGame = idInGame
 	param.PlayerTeamData = data
@@ -185,15 +191,17 @@ func (room *Room) CreateGameParam(config *DataFormat.MapConfig, data *DataFormat
 	} else {
 		param.MapName = room.Data.MapName
 	}
-	for _,v := range config.Roles {
+	fmt.Println("map config length: ", len(room.mapConfig.Roles))
+	for _,v := range room.mapConfig.Roles {
 		name := v.Name
-		newItem := &*DataFormat.RolesMap[name]
+		newItem := *DataFormat.RolesMap[name]
 		newItem.Team = v.Team
 		newItem.Position = Utils.ParsePositionToV3i(v.Position)
 		room.roleItemId++
 		newItem.Id = room.roleItemId
-		param.Roles = append(param.Roles, newItem)
+		param.Roles = append(param.Roles, &newItem)
 	}
+	fmt.Println("length of roles: ",len(param.Roles))
 	return param
 }
 

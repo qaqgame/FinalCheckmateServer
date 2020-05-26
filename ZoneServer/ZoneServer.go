@@ -62,8 +62,12 @@ func NewZoneServer(id, port int, name ...string) *ZoneServer {
 
 	zoneServer.context.Net.RegisterRPCMethods(zoneServer, reflect.ValueOf(zoneServer), "UpdateRoomList", "CreateRoom", "JoinRoom", "ExitRoom", "RoomReady", "ChangeTeam", "UpdateRoomInfo")
 
+	mapconfig := new(DataFormat.MapConfig)
+	zoneServer.context.Net.RegisterProtoMsg("*DataFormat.MapConfig",mapconfig)
+
+	zoneServer.context.Ipc.RegisterRPC(zoneServer)
 	// go zoneServer.ShowDump()
-	zoneServer.DefaultCreateRoom()
+	// zoneServer.DefaultCreateRoom()
 
 	return zoneServer
 }
@@ -145,14 +149,18 @@ func (zoneServer *ZoneServer) UpdateRoomList(session Server.ISession) {
 }
 
 // CreateRoom :
-func (zoneServer *ZoneServer) CreateRoom(session Server.ISession, roomName, mapName, modeName string, teams []int32) {
-	zoneServer.Logger.Info("Invoke RPC function: CrateRoom")
+func (zoneServer *ZoneServer) CreateRoom(session Server.ISession, roomName, mapName string, mapConfig *DataFormat.MapConfig) {
+	mapConfig1 := new(DataFormat.MapConfig)
+	*mapConfig1 = *mapConfig
+	zoneServer.Logger.Info("Invoke RPC function: CrateRoom, roles: ", len(mapConfig1.Roles))
 	userID := session.GetUid()
 	udcom := zoneServer.onlineManager.GetUserDataByID(userID)
 
-	room := CreateRoom(userID, udcom.Userdata.GetName(), session, roomName, modeName, mapName, teams)
+	room := CreateRoom(userID, udcom.Userdata.GetName(), session, roomName, mapName, mapConfig1)
 	zoneServer.roomManager.listRoom = append(zoneServer.roomManager.listRoom, room)
 
+	fmt.Println("room id in createroom: ", room.Data.Id, "mapconfig: ", room.mapConfig)
+	fmt.Println("id -1 : ",zoneServer.roomManager.listRoom[0].mapConfig)
 	zoneServer.context.Net.Return(room.Data)
 }
 
@@ -161,6 +169,7 @@ func (zoneServer *ZoneServer) JoinRoom(session Server.ISession, roomID uint32) {
 	zoneServer.Logger.Info("Invoke RPC function: JoinRoom")
 	uid := session.GetUid()
 	room := zoneServer.roomManager.GetRoom(roomID)
+	fmt.Println("room id in join room: ", room.Data.Id, "mapconfig: ", room.mapConfig)
 	if room != nil && !room.IsAllReady() {
 		udcom := zoneServer.onlineManager.GetUserDataByID(uid)
 
@@ -200,16 +209,18 @@ func (zoneServer *ZoneServer) RoomReady(session Server.ISession, roomID uint32, 
 	zoneServer.Logger.Info("Invoke RPC function: RoomReady")
 	userID := session.GetUid()
 	room := zoneServer.roomManager.GetRoom(roomID)
+	fmt.Println("room id: ", room.Data.Id, "mapconfig: ", room.mapConfig)
 	if room != nil {
 		fmt.Println("status: ", ready)
 		room.SetReady(userID, ready)
 		listSession := room.GetSessionList()
 		zoneServer.context.Net.InvokeBroadCast(listSession, "NotifyRoomUpdate", room.Data)
 
-		if room.IsAllReady() {
+		if room.IsAllReady() && len(room.Data.Players) == int(room.Data.Maxplayercount) {
 			// 开始倒计时。
 			room.Data.Ready = true
 			if !zoneServer.timerIsRun {
+				fmt.Println("room id in roomready: ",room.Data.Id, "room roles: ", len(room.mapConfig.Roles))
 				go zoneServer.Timer(listSession, room)
 			}
 		} else {
@@ -231,6 +242,14 @@ func (zoneServer *ZoneServer) ChangeTeam(session Server.ISession, roomID uint32,
 	userID := session.GetUid()
 	room := zoneServer.roomManager.GetRoom(roomID)
 	if room != nil {
+		for _, v := range room.Data.Players {
+			if v.Teamid == team {
+				// listSession := room.GetSessionList()
+				// zoneServer.context.Net.InvokeBroadCast(listSession, "NotifyRoomUpdate", room.Data)
+				return
+			}
+		}
+
 		for _, v := range room.Data.Players {
 			if v.Uid == userID {
 				v.Teamid = team
@@ -256,6 +275,20 @@ func (zoneServer *ZoneServer) UpdateRoomInfo(session Server.ISession, roomID uin
 	} else {
 		zoneServer.context.Net.ReturnError("room not exist", roomID)
 	}
+}
+
+// DeleteRoom:
+func (zoneServer *ZoneServer) DeleteRoom(args *DataFormat.CreateGame, reply *DataFormat.Reply) error {
+	roomid := args.RoomID
+	j := 0
+	for _,v := range zoneServer.roomManager.listRoom {
+		if v.Data.Id != roomid {
+			zoneServer.roomManager.listRoom[j] = v
+			j++
+		}
+	}
+	zoneServer.roomManager.listRoom = zoneServer.roomManager.listRoom[:j]
+	return nil
 }
 
 // OnFinishRPCCall : asynchronous rpc call
@@ -311,7 +344,7 @@ func (zoneServer *ZoneServer) Timer(listSession []Server.ISession, room *Room) {
 
 					playerTeamData.Masks = append(playerTeamData.Masks, maskData)
 				}
-
+				fmt.Println("room id in Timer: ",room.Data.Id, "room roles: ", len(room.mapConfig.Roles))
 				// start fsp server
 				zoneServer.startFspServer(room, playerTeamData)
 
@@ -353,7 +386,8 @@ func (zoneServer *ZoneServer) startFspServer(room *Room, playerTeamData *DataFor
 			// start a synchronous rpc call
 			ok := zoneServer.context.Ipc.CallRpc(creategame, reply, 4051, "GameManager.RPCStartGame")
 			if ok == true {
-				gameParam := room.CreateGameParam(DataFormat.DefaultMapConfig,playerTeamData,0)
+				fmt.Println("room id1: ",room.Data.Id, "room roles: ", len(room.mapConfig.Roles))
+				gameParam := room.CreateGameParam(playerTeamData,0)
 				for _, v := range room.Data.Players {
 					session := room.GetSession(v.GetUid())
 					reply.Fspparam.Sid = reply.P2S[v.GetUid()]
