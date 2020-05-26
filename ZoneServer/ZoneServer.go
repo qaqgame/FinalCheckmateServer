@@ -353,11 +353,13 @@ func (zoneServer *ZoneServer) startFspServer(room *Room, playerTeamData *DataFor
 			// start a synchronous rpc call
 			ok := zoneServer.context.Ipc.CallRpc(creategame, reply, 4051, "GameManager.RPCStartGame")
 			if ok == true {
+				gameParam := room.CreateGameParam(DataFormat.DefaultMapConfig,playerTeamData,0)
 				for _, v := range room.Data.Players {
 					session := room.GetSession(v.GetUid())
 					reply.Fspparam.Sid = reply.P2S[v.GetUid()]
 					zoneServer.Logger.Warn("NotifyGameStart: player id in game: ", v.Id, "session: ", session.GetUid())
-					zoneServer.context.Net.Invoke(session, "NotifyGameStart", playerTeamData, v.Id, reply.Fspparam)
+					gameParam.IdInGame = v.Id
+					zoneServer.context.Net.Invoke(session, "NotifyGameStart", gameParam, reply.Fspparam)
 				}
 			} else {
 				zoneServer.Logger.Error("RPC call RPCStartGame failed")

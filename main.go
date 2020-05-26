@@ -1,15 +1,15 @@
 package main
 
 import (
+	_ "code.holdonbush.top/FinalCheckmateServer/Roles"
 	"code.holdonbush.top/FinalCheckmateServer/ZoneServer"
 	// _ "code.holdonbush.top/FinalCheckmateServer/db"
 	"code.holdonbush.top/FinalCheckmateServer/gameserver"
 	"code.holdonbush.top/ServerFramework"
-	"os"
-
 	_ "code.holdonbush.top/ServerFramework/Server"
 	"code.holdonbush.top/ServerFramework/ServerManager"
 	log "github.com/sirupsen/logrus"
+	"os"
 )
 
 func init() {
@@ -29,15 +29,7 @@ func main() {
 			servermanager.AddServer(gameserver.NewGameServer(v.Id, v.Port, v.Name))
 		}
 	}
-	//zoneServer := ZoneServer.NewZoneServer(1, 4050)
-	//gameServer := gameserver.NewGameServer(2, 4051)
-	//servermanager.AddServer(zoneServer)
-	//servermanager.AddServer(gameServer)
 
 	servermanager.StartAllServer1()
 	ServerFramework.Run(servermanager)
-	//for true {
-	//	// servermanager.Tick()
-	//	time.Sleep(time.Millisecond)
-	//}
 }

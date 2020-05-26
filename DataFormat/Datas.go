@@ -24,7 +24,23 @@ var (
 	SuccessReturn = ReturnCode{Code: -1, Info: "Success"}
 	// UnknownError : unknown error
 	UnknownError = ReturnCode{Code: 1, Info: "UnknownError"}
+	// Roles Map
+	RolesMap = make(map[string]*RoleData)
+	// DefaultMapConfig
+	DefaultMapConfig = &MapConfig{
+		Rule:          "KillMode",
+		MaxTeam:       4,
+		Roles:         []*RoleTrack{
+			&RoleTrack{
+				Name:     "Alice",
+				Team:     1,
+				Position: "(3,3,3)",
+			},
+		},
+	}
 )
+
+
 
 // ComData : data communications between client and server
 type ComData struct {

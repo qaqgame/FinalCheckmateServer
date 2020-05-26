@@ -1,0 +1,48 @@
+{
+    "name": "Alice",
+    "model": "Alice",
+    "team": 1,
+    "position": {
+        "x": 1,
+        "y": 0,
+        "z": -1
+    },
+    "status": 0,
+    "mask": [
+        65534, 65535, 65535, 65535, 65535, 65535, 65535, 65535,
+        65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535,
+        65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535,
+        65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535,
+        65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535,
+        65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535,
+        65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535,
+        65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535
+    ],
+    "extraMove": {
+
+    },
+    "props": {
+        "hp": 100,
+        "mp": 100,
+        "miss": 0.2,
+        "physicalRes": 50,
+        "magicRes": 50,
+        "attack": 100,
+        "moveRange": 3,
+        "attackSpeed": 1.0,
+        "physicalIgnore": 0,
+        "magicIgnore": 0,
+        "viewRange": 3,
+        "vieHeight": 0,
+        "attackRange": 1,
+        "magicAttack": false,
+        "canMiss": true,
+        "extraData": "[{\"name\":\"test\",\"param\":{\"type\":\"Checkmate.Game.Position\",\"value\":\"\",\"param\":[{\"type\":\"int\",\"value\":\"3\",\"param\":[] },{\"type\":\"int\",\"value\":\"2\",\"param\":[] },{\"type\":\"int\",\"value\":\"1\",\"param\":[] }] } }]"
+    },
+    "skills": ["TestSkill", "Gogogo", "FireBurn", "SafePlace", "FlashFlip"],
+    "attackSource": "arrow",
+    "attackEffect": "SwordWind",
+    "nearAttack": true,
+    "extraData": ""
+
+}

@@ -1,6 +1,7 @@
 package ZoneServer
 
 import (
+	"code.holdonbush.top/FinalCheckmateServer/Utils"
 	"errors"
 	"sort"
 	"strconv"
@@ -27,6 +28,7 @@ type Room struct {
 	Data              *DataFormat.RoomData
 	mapUserID2Session map[uint32]Server.ISession
 	logger            *log.Entry
+	roleItemId        int32
 }
 
 // Dump : show connect infos
@@ -51,6 +53,7 @@ func CreateRoom(userID uint32, userName string, session Server.ISession, roomNam
 	room.Data.MapName = mapName
 	room.Data.Team = teams
 	room.Data.Maxplayercount = 0
+	room.roleItemId = 0
 	for _, v := range teams {
 		room.Data.Maxplayercount += v
 	}
@@ -173,17 +176,20 @@ func (room *Room) SetReady(userID uint32, value bool) {
 	}
 }
 
-// GetGameParam :
-func (room *Room) GetGameParam() *DataFormat.GameParam {
+func (room *Room) CreateGameParam(config *DataFormat.MapConfig, data *DataFormat.PlayerTeamData, idInGame uint32) *DataFormat.GameParam {
 	param := new(DataFormat.GameParam)
-	param.Id = room.Data.GetId()
-	param.LimitedTime = DataFormat.LimiedTime
-	param.Randseed = 0
-	param.Gamemode = DataFormat.GameModes_TimeLimitPvP
-
-	param.Map.Id = 1
-	param.Map.Name = "default map"
-
+	param.IdInGame = idInGame
+	param.PlayerTeamData = data
+	param.MapName = room.Data.MapName
+	for _,v := range config.Roles {
+		name := v.Name
+		newItem := &*DataFormat.RolesMap[name]
+		newItem.Team = v.Team
+		newItem.Position = Utils.ParsePositionToV3i(v.Position)
+		room.roleItemId++
+		newItem.Id = room.roleItemId
+		param.Roles = append(param.Roles, newItem)
+	}
 	return param
 }
 

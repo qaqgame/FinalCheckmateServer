@@ -96,20 +96,6 @@ message MapData {
     string name = 2;
 }
 
-// GameParam :
-message GameParam {
-    // id - game id
-    uint32 id = 1;
-    // map - map of this game
-    MapData map = 2;
-    // randseed - client use same randseed
-    int32 randseed = 3;
-    // gamemode - mode of game
-    GameModes gamemode = 4;
-    // limitedTime - limited time
-    int32 limitedTime = 5;
-}
-
 // game modes
 enum GameModes {
     EndLessPvE = 0;
@@ -192,4 +178,71 @@ message UintCntMsg {
 //
 message UintListCntMsg {
     repeated uint32 Values = 1;
+}
+
+// RoleTrack
+message RoleTrack {
+    string name = 1;
+    int32 team = 2;
+    string position = 3;
+}
+
+// MapConfig
+message MapConfig {
+    string rule = 1;
+    int32 maxTeam = 2;
+    repeated RoleTrack roles = 3;
+}
+
+// v3i
+message v3i {
+    int32 x = 1;
+    int32 y = 2;
+    int32 z = 3;
+}
+
+// RoleProperty
+message RoleProperty {
+    int32 hp = 1;
+    int32 mp = 2;
+    float miss = 3;
+    int32 physicalRes = 4;
+    int32 magicRes = 5;
+    int32 attack = 6;
+    int32 moveRange = 7;
+    float attackSpeed = 8;
+    float physicalIgnore = 9;
+    float magicIgnore = 10;
+    int32 viewRange = 11;
+    int32 viewHeight = 12;
+    int32 attackRange = 13;
+    bool magicAttack = 14;
+    bool canMiss = 15;
+    string extraData = 16;
+}
+
+// RoleData
+message RoleData {
+    int32 id = 1;
+    string name = 2;
+    string model = 3;
+    int32 team = 4;
+    v3i position = 5;
+    int32 status = 6;
+    repeated int32 mask = 7;
+    map<int32, int32> map = 8;
+    RoleProperty props = 9;
+    repeated string skills = 10;
+    string attackSource = 11;
+    string attackEffect = 12;
+    bool nearAttack = 13;
+    string extraData = 14;
+}
+
+// GameParam
+message GameParam {
+    PlayerTeamData playerTeamData = 1;
+    uint32   idInGame = 2;
+    repeated RoleData roles = 3;
+    string   mapName = 4;
 }
