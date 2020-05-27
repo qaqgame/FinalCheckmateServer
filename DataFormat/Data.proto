@@ -147,6 +147,7 @@ message MaskData {
     uint32 pid = 1;         // 分配的游戏内id
     uint32 friendMask = 2;  // 友军标识
     uint32 enemyMask = 3;   // 敌军标识
+    string name = 4;        // 昵称
 }
 
 // 游戏开始时的下行数据
@@ -245,4 +246,10 @@ message GameParam {
     uint32   idInGame = 2;
     repeated RoleData roles = 3;
     string   mapName = 4;
+}
+
+// PlayerAP
+message PlayerAP {
+    uint32 curPlayer = 1;
+    map<uint32, int32> allAp = 2;
 }

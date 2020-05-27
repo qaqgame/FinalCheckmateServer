@@ -63,7 +63,8 @@ func NewZoneServer(id, port int, name ...string) *ZoneServer {
 	zoneServer.context.Net.RegisterRPCMethods(zoneServer, reflect.ValueOf(zoneServer), "UpdateRoomList", "CreateRoom", "JoinRoom", "ExitRoom", "RoomReady", "ChangeTeam", "UpdateRoomInfo")
 
 	mapconfig := new(DataFormat.MapConfig)
-	zoneServer.context.Net.RegisterProtoMsg("*DataFormat.MapConfig",mapconfig)
+	//"*DataFormat.MapConfig",
+	zoneServer.context.Net.RegisterProtoMsg(mapconfig)
 
 	zoneServer.context.Ipc.RegisterRPC(zoneServer)
 	// go zoneServer.ShowDump()
@@ -341,7 +342,7 @@ func (zoneServer *ZoneServer) Timer(listSession []Server.ISession, room *Room) {
 					maskData.Pid = v.Id
 					maskData.EnemyMask = ^(0x01 << v.Id)
 					maskData.FriendMask = 0x01 << v.Id
-
+					maskData.Name = v.Name
 					playerTeamData.Masks = append(playerTeamData.Masks, maskData)
 				}
 				fmt.Println("room id in Timer: ",room.Data.Id, "room roles: ", len(room.mapConfig.Roles))
