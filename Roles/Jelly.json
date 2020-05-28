@@ -1,0 +1,48 @@
+{
+    "name": "Jelly",
+    "model": "Jelly",
+    "team": 1,
+    "position": {
+        "x": 1,
+        "y": 0,
+        "z": -1
+    },
+    "status": 0,
+    "mask": [
+        65534, 65535, 65535, 65535, 65535, 65535, 65535, 65535,
+        65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535,
+        65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535,
+        65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535,
+        65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535,
+        65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535,
+        65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535,
+        65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535
+    ],
+    "extraMove": {
+
+    },
+    "props": {
+        "hp": 60,
+        "mp": 90,
+        "miss": 0.6,
+        "physicalRes": 50,
+        "magicRes": 50,
+        "attack": 70,
+        "moveRange": 5,
+        "attackSpeed": 2.0,
+        "physicalIgnore": 0.3,
+        "magicIgnore": 0.2,
+        "viewRange": 4,
+        "vieHeight": 0,
+        "attackRange": 3,
+        "magicAttack": false,
+        "canMiss": true,
+        "extraData": "[{\"name\":\"test\",\"param\":{\"type\":\"Checkmate.Game.Position\",\"value\":\"\",\"param\":[{\"type\":\"int\",\"value\":\"3\",\"param\":[] },{\"type\":\"int\",\"value\":\"2\",\"param\":[] },{\"type\":\"int\",\"value\":\"1\",\"param\":[] }] } }]"
+    },
+    "skills": ["TestSkill", "Gogogo", "DeathBomb", "PosShooting", "FlashFlip"],
+    "attackSource": "Fireball",
+    "attackEffect": "SwordWind",
+    "nearAttack": false,
+    "extraData": ""
+
+}

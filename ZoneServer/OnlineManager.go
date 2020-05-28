@@ -54,7 +54,7 @@ func (onlineManager *OnlineManager) OnLoginRequest(session Server.ISession, inde
 	success := false
 	loginmsg := tmsg.(*DataFormat.LoginMsg)
 
-	onlineManager.logger.Info("Func OnLoginResquest, loginmsg: ", loginmsg, "loginmsg name:",loginmsg.Name)
+	// onlineManager.logger.Info("Func OnLoginResquest, loginmsg: ", loginmsg, "loginmsg name:",loginmsg.Name)
 	onlineManager.logger.Info("login message id: ", loginmsg.Uid)
 	// Get a DataFormat.ComData type info
 	ud := onlineManager.GetUserDataByName(loginmsg.Name)
@@ -103,9 +103,9 @@ func activeUser(session Server.ISession, userdata *DataFormat.ComData) {
 
 // OnHeartBeatRequest :
 func (onlineManager *OnlineManager) OnHeartBeatRequest(session Server.ISession, index uint32, tmsg proto.Message) {
-	onlineManager.logger.Warn("invoke into OnHeartBeatRequest", session.GetUid())
+	onlineManager.logger.Info("invoke into OnHeartBeatRequest", session.GetUid())
 	heartbeatreq := tmsg.(*DataFormat.HeartBeatReq)
-	onlineManager.logger.Warn("HeartBeatReq info: ", heartbeatreq)
+	onlineManager.logger.Info("HeartBeatReq info: ", heartbeatreq)
 	ud := onlineManager.GetUserDataByID(session.GetUid())
 	if ud != nil {
 		ud.Serveruserdata.LastHeartBeatTime = time.Now().UnixNano() / int64(time.Millisecond)

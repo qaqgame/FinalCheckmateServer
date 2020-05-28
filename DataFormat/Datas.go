@@ -16,7 +16,7 @@ const (
 	// GameServer : game server
 	GameServer = 2
 	// DefaultAP
-	DefaultAP = 20
+	DefaultAP = 10
 )
 
 var (

@@ -308,7 +308,7 @@ func (zoneServer *ZoneServer) OnFinishRPCCall(room *Room, playerTeamData *DataFo
 				session := room.GetSession(v.GetUid())
 				fmt.Println("v: ",reply.P2S)
 				reply.Fspparam.Sid = reply.P2S[v.GetUid()]
-				zoneServer.Logger.Warn("NotifyGameStart: player id in game: ", v.Id, "session: ", session.GetUid())
+				zoneServer.Logger.Info("NotifyGameStart: player id in game: ", v.Id, "session: ", session.GetUid())
 				zoneServer.context.Net.Invoke(session, "NotifyGameStart", playerTeamData, v.Id, reply.Fspparam)
 			}
 			zoneServer.rpcMoniter = false
@@ -327,10 +327,10 @@ func (zoneServer *ZoneServer) Timer(listSession []Server.ISession, room *Room) {
 		select {
 		case <-tick.C:
 			room.Data.Time = count
-			zoneServer.Logger.Warn("Session len： ",len(listSession))
-			for _,v := range listSession {
-				zoneServer.Logger.Warn("session info: ", v.GetId(), v.GetUid(), v.IsActive())
-			}
+			zoneServer.Logger.Info("Session len： ",len(listSession))
+			//for _,v := range listSession {
+			//	zoneServer.Logger.Warn("session info: ", v.GetId(), v.GetUid(), v.IsActive())
+			//}
 			// invoke client's update
 			zoneServer.context.Net.InvokeBroadCast(listSession, "NotifyRoomUpdate", room.Data)
 			if count == 0 {
@@ -392,7 +392,7 @@ func (zoneServer *ZoneServer) startFspServer(room *Room, playerTeamData *DataFor
 				for _, v := range room.Data.Players {
 					session := room.GetSession(v.GetUid())
 					reply.Fspparam.Sid = reply.P2S[v.GetUid()]
-					zoneServer.Logger.Warn("NotifyGameStart: player id in game: ", v.Id, "session: ", session.GetUid())
+					zoneServer.Logger.Info("NotifyGameStart: player id in game: ", v.Id, "session: ", session.GetUid())
 					gameParam.IdInGame = v.Id
 					zoneServer.context.Net.Invoke(session, "NotifyGameStart", gameParam, reply.Fspparam)
 				}

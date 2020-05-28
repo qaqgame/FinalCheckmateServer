@@ -1,6 +1,6 @@
 {
-    "name": "Ary",
-    "model": "Ary",
+    "name": "Bob",
+    "model": "Bob",
     "team": 1,
     "position": {
         "x": 1,
@@ -24,10 +24,10 @@
     "props": {
         "hp": 100,
         "mp": 100,
-        "miss": 0.2,
-        "physicalRes": 50,
-        "magicRes": 50,
-        "attack": 100,
+        "miss": 0.1,
+        "physicalRes": 40,
+        "magicRes": 30,
+        "attack": 50,
         "moveRange": 3,
         "attackSpeed": 1.0,
         "physicalIgnore": 0,
