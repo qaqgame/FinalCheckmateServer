@@ -1,6 +1,7 @@
 package gameserver
 
 import (
+	"code.holdonbush.top/FinalCheckmateServer/DataFormat"
 	"code.holdonbush.top/ServerFramework/IPCWork"
 	"code.holdonbush.top/ServerFramework/ServerManager"
 	"code.holdonbush.top/ServerFramework/common"
@@ -32,7 +33,7 @@ func NewGameServer(id, port int, name ...string) *GameServer {
 	Info.Name = tname
 	c := make(chan int, 2)
 
-	gameserver.context.Fsp = fsplite.NewFSPManager(port)
+	gameserver.context.Fsp = fsplite.NewFSPManager(port, DataFormat.IpModel)
 	gameserver.context.Ipc = IPCWork.NewIPCManager(Info)
 
 	gameserver.gamemanager = NewGameManager(port,gameserver.context)

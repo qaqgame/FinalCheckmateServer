@@ -38,6 +38,7 @@ var (
 			},
 		},
 	}
+	IpModel int
 )
 
 

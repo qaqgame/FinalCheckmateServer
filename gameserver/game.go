@@ -34,7 +34,10 @@ func (mygame *MyGameInstance) SetRPCCaller(caller RPCCaller) {
 
 func NewMyGameInstance(_port int,gameid uint32) *MyGameInstance {
 	myGameInstance := new(MyGameInstance)
-	defaultparam := fsplite.NewDefaultFspParam("120.79.240.163", _port)
+	fmt.Println()
+	fmt.Println(DataFormat.IpModel)
+	fmt.Println()
+	defaultparam := fsplite.NewDefaultFspParam("", _port, DataFormat.IpModel)
 	myGameInstance.FSPGame = fsplite.NewFSPGame(gameid, defaultparam)
 
 	myGameInstance.APQueue = fsplite.NewQueue()

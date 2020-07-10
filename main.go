@@ -1,8 +1,12 @@
 package main
 
 import (
+	"code.holdonbush.top/FinalCheckmateServer/DataFormat"
 	_ "code.holdonbush.top/FinalCheckmateServer/Roles"
 	"code.holdonbush.top/FinalCheckmateServer/ZoneServer"
+	"flag"
+	"fmt"
+
 	// _ "code.holdonbush.top/FinalCheckmateServer/db"
 	"code.holdonbush.top/FinalCheckmateServer/gameserver"
 	"code.holdonbush.top/ServerFramework"
@@ -13,11 +17,14 @@ import (
 )
 
 func init() {
+	flag.IntVar(&DataFormat.IpModel,"ipModel",0,"选择使用公网IP--输入0(这也是默认选项),还是局域网IP--输入1")
+	flag.Parse()
 	log.SetOutput(os.Stdout)
 	log.SetLevel(log.TraceLevel)
 }
 
 func main() {
+	fmt.Println("IPMODEL", DataFormat.IpModel)
 	servermanager := ServerManager.NewServerManager()
 
 	serverConfig :=ServerManager.GetAllServerModuleInfo()
